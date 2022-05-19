@@ -7,7 +7,7 @@
 // @license      AGPL-3.0
 // @match        https://minesweeper.online/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-// @require      https://hub.fastgit.xyz/T0nyX1ang/MOHelper/raw/main/solver.js
+// @require      https://github.com/T0nyX1ang/MOHelper/raw/main/solver.js
 // @grant        none
 // ==/UserScript==
 
