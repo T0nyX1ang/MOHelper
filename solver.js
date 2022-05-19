@@ -100,7 +100,7 @@ class Binomial {
 
         var range = Math.min(mines, squares - mines);
 
-        // calculate the combination. 
+        // calculate the combination.
         for (var i = 0; i < range; i++) {
             top = top * BigInt(squares - i);
             bot = bot * BigInt(i + 1);
@@ -639,7 +639,7 @@ class Board {
         return tally;
     }
 
-    // sets up the initial tiles 
+    // sets up the initial tiles
     init_tiles() {
 
         for (var y = 0; y < this.height; y++) {
@@ -856,7 +856,7 @@ class ProbabilityEngine {
 
             var boxWit = new BoxWitness(this.board, wit);
 
-            // can't have too many or too few mines 
+            // can't have too many or too few mines
             if (boxWit.minesToFind < 0 || boxWit.mineToFind > boxWit.tiles.length) {
                 this.validWeb = false;
             }
@@ -920,14 +920,14 @@ class ProbabilityEngine {
 
         }
 
-        // calculate the min and max mines for each box 
+        // calculate the min and max mines for each box
         for (var i = 0; i < this.boxes.length; i++) {
             var box = this.boxes[i];
             box.calculate(this.minesLeft);
             //console.log("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
         }
 
-        // Report how many boxes each witness is adjacent to 
+        // Report how many boxes each witness is adjacent to
         // for (var i = 0; i < this.boxWitnesses.length; i++) {
         //     var boxWit = this.boxWitnesses[i];
         //     //console.log("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
@@ -1060,7 +1060,7 @@ class ProbabilityEngine {
 
         // try and connect 2 or links together to form an unavoidable 50/50
         for (var link of links) {
-            if (!link.processed && (link.closed1 && !link.closed2 || !link.closed1 && link.closed2)) { // this is the XOR operator, so 1 and only 1 of these is closed 
+            if (!link.processed && (link.closed1 && !link.closed2 || !link.closed1 && link.closed2)) { // this is the XOR operator, so 1 and only 1 of these is closed
 
                 var openTile;
                 var extensions = 0;
@@ -1186,7 +1186,7 @@ class ProbabilityEngine {
         // look for places which could be dead
         this.getCandidateDeadLocations();
 
-        // create an initial solution of no mines anywhere 
+        // create an initial solution of no mines anywhere
         this.heldProbs.push(new ProbabilityLine(this.boxes.length, BigInt(1)));
 
         // add an empty probability line to get us started
@@ -1469,7 +1469,7 @@ class ProbabilityEngine {
             }
         }
 
-        // sort into mine order 
+        // sort into mine order
         result.sort(function (a, b) {
             return a.mineCount - b.mineCount
         });
@@ -1539,7 +1539,7 @@ class ProbabilityEngine {
 
         //if (npl.mineCount >= minTotalMines) {
         result.push(current);
-        //}	
+        //}
 
         this.writeToConsole(target.length + " Probability Lines compressed to " + result.length);
 
@@ -1621,7 +1621,7 @@ class ProbabilityEngine {
             this.writeToConsole("Ending independent edge");
         }
 
-        // if we are down here then there is no witness which is on the boundary, so we have processed a complete set of independent witnesses 
+        // if we are down here then there is no witness which is on the boundary, so we have processed a complete set of independent witnesses
 
         // if playing for efficiency check all edges, slower but we get better information
         if (this.playStyle != PLAY_STYLE_EFFICIENCY && !analysisMode && !this.options.fullProbability) {
@@ -1708,7 +1708,7 @@ class ProbabilityEngine {
         this.workingProbs = [new ProbabilityLine(this.boxes.length, BigInt(1))];
         //this.workingProbs.push(new ProbabilityLine(this.boxes.length, BigInt(1)));
 
-        // reset the mask indicating that no boxes have been processed 
+        // reset the mask indicating that no boxes have been processed
         this.mask.fill(false);
         //}
 
@@ -2045,7 +2045,7 @@ class ProbabilityEngine {
         return true;
     }
 
-    // determine a set of independent witnesses which can be used to brute force the solution space more efficiently then a basic 'pick r from n' 
+    // determine a set of independent witnesses which can be used to brute force the solution space more efficiently then a basic 'pick r from n'
     generateIndependentWitnesses() {
 
         this.remainingSquares = this.witnessed.length;
@@ -2069,7 +2069,7 @@ class ProbabilityEngine {
                 }
             }
 
-            // split the witnesses into dependent ones and independent ones 
+            // split the witnesses into dependent ones and independent ones
             if (okay) {
                 //console.log("true");
                 this.remainingSquares = this.remainingSquares - w.tiles.length;
@@ -2103,7 +2103,7 @@ class ProbabilityEngine {
 
         //console.log("There are " + this.heldProbs.length + " different mine counts on the edge");
 
-        // calculate how many mines 
+        // calculate how many mines
         for (var i = 0; i < this.heldProbs.length; i++) {
 
             var pl = this.heldProbs[i];
@@ -2276,7 +2276,7 @@ class ProbabilityEngine {
         //	solver.display("Best probability is off the edge " + bestProbability + " but will look for options on the edge only slightly worse");
         //	//test = bestProbability.multiply(Solver.EDGE_TOLERENCE);
         //	test = bestProbability.multiply(freshhold);
-        //} else 
+        //} else
 
         if (this.bestProbability == 1) { // if we have a probability of one then don't allow lesser probs to get a look in
             test = this.bestProbability;
@@ -2293,7 +2293,7 @@ class ProbabilityEngine {
 
                     //best.push(new Action(squ.x, squ.y, this.boxProb[i]));
 
-                    //  exclude dead tiles 
+                    //  exclude dead tiles
                     var dead = false;
                     for (var k = 0; k < this.deadTiles.length; k++) {
                         if (this.deadTiles[k].isEqual(squ)) {
@@ -2404,7 +2404,7 @@ class ProbabilityLine {
 
     //constructor(boxCount) {
     //    constructor(boxCount, BigInt(0));
-    //} 
+    //}
 
     constructor(boxCount, solutionCount) {
 
@@ -2452,7 +2452,7 @@ class BoxWitness {
 
         this.tile = tile;
 
-        this.boxes = []; // adjacent boxes 
+        this.boxes = []; // adjacent boxes
         this.tiles = []; // adjacent tiles
 
         this.processed = false;
@@ -2529,7 +2529,7 @@ class BoxWitness {
         return true;
     }
 
-    // add an adjacdent box 
+    // add an adjacdent box
     addBox(box) {
         this.boxes.push(box);
     }
@@ -2720,7 +2720,7 @@ class SolutionCounter {
 
             var boxWit = new BoxWitness(this.board, wit);
 
-            // can't have too many or too few mines 
+            // can't have too many or too few mines
             if (boxWit.minesToFind < 0 || boxWit.mineToFind > boxWit.tiles.length) {
                 this.validWeb = false;
             }
@@ -2780,14 +2780,14 @@ class SolutionCounter {
 
         }
 
-        // calculate the min and max mines for each box 
+        // calculate the min and max mines for each box
         for (var i = 0; i < this.boxes.length; i++) {
             var box = this.boxes[i];
             box.calculate(this.minesLeft);
             //console.log("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
         }
 
-        // Report how many boxes each witness is adjacent to 
+        // Report how many boxes each witness is adjacent to
         for (var i = 0; i < this.boxWitnesses.length; i++) {
             var boxWit = this.boxWitnesses[i];
             //console.log("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
@@ -2813,7 +2813,7 @@ class SolutionCounter {
         //    this.mask.push(false);
         //}
 
-        // create an initial solution of no mines anywhere 
+        // create an initial solution of no mines anywhere
         this.heldProbs.push(new ProbabilityLine(this.boxes.length, BigInt(1)));
 
         // add an empty probability line to get us started
@@ -3063,7 +3063,7 @@ class SolutionCounter {
             }
         }
 
-        // sort into mine order 
+        // sort into mine order
         result.sort(function (a, b) {
             return a.mineCount - b.mineCount
         });
@@ -3134,9 +3134,9 @@ class SolutionCounter {
 
         //if (npl.mineCount >= minTotalMines) {
         result.push(current);
-        //}	
+        //}
 
-        //console.log(target.length + " Probability Lines compressed to " + result.length); 
+        //console.log(target.length + " Probability Lines compressed to " + result.length);
 
         return result;
 
@@ -3205,7 +3205,7 @@ class SolutionCounter {
             return new NextWitness(bestWitness);
         }
 
-        // if we are down here then there is no witness which is on the boundary, so we have processed a complete set of independent witnesses 
+        // if we are down here then there is no witness which is on the boundary, so we have processed a complete set of independent witnesses
 
 
         // since we have calculated all the mines in an independent set of witnesses we can crunch them down and store them for later
@@ -3219,7 +3219,7 @@ class SolutionCounter {
         this.workingProbs = [];
         this.workingProbs.push(new ProbabilityLine(this.boxes.length, BigInt(1)));
 
-        // reset the mask indicating that no boxes have been processed 
+        // reset the mask indicating that no boxes have been processed
         this.mask.fill(false);
 
         // if the position is invalid exit now
@@ -3246,7 +3246,7 @@ class SolutionCounter {
 
         //console.log("There are " + this.heldProbs.length + " different mine counts on the edge");
 
-        // calculate how many mines 
+        // calculate how many mines
         for (var i = 0; i < this.heldProbs.length; i++) {
 
             var pl = this.heldProbs[i];
@@ -3337,7 +3337,7 @@ const PATTERNS = [
     [false, true, false, false],
     [false, false, false, true],
     [true, false, false, false],
-    [false, false, true, false] // 1 mine   
+    [false, false, true, false] // 1 mine
 ];
 
 
@@ -3389,7 +3389,7 @@ class FiftyFiftyHelper {
                 // if information can come from any of the 6 tiles immediately right and left then can't be a 50-50
                 if (this.isPotentialInfo(i - 1, j - 1) || this.isPotentialInfo(i - 1, j) || this.isPotentialInfo(i - 1, j + 1) ||
                     this.isPotentialInfo(i + 2, j - 1) || this.isPotentialInfo(i + 2, j) || this.isPotentialInfo(i + 2, j + 1)) {
-                    continue; // this skips the rest of the logic below this in the for-loop 
+                    continue; // this skips the rest of the logic below this in the for-loop
                 }
 
                 // is both hidden tiles being mines a valid option?
@@ -3425,7 +3425,7 @@ class FiftyFiftyHelper {
                 // if information can come from any of the 6 tiles immediately above and below then can't be a 50-50
                 if (this.isPotentialInfo(i - 1, j - 1) || this.isPotentialInfo(i, j - 1) || this.isPotentialInfo(i + 1, j - 1) ||
                     this.isPotentialInfo(i - 1, j + 2) || this.isPotentialInfo(i, j + 2) || this.isPotentialInfo(i + 1, j + 2)) {
-                    continue; // this skips the rest of the logic below this in the for-loop 
+                    continue; // this skips the rest of the logic below this in the for-loop
                 }
 
                 // is both hidden tiles being mines a valid option?
@@ -3476,7 +3476,7 @@ class FiftyFiftyHelper {
 
                 // need the corners to be flags
                 if (this.isPotentialInfo(i - 1, j - 1) || this.isPotentialInfo(i + 2, j - 1) || this.isPotentialInfo(i - 1, j + 2) || this.isPotentialInfo(i + 2, j + 2)) {
-                    continue; // this skips the rest of the logic below this in the for-loop 
+                    continue; // this skips the rest of the logic below this in the for-loop
                 }
 
                 this.writeToConsole(tiles[0].asText() + " " + tiles[1].asText() + " " + tiles[2].asText() + " " + tiles[3].asText() + " is candidate box 50/50");
@@ -3761,7 +3761,7 @@ class EfficiencyHelper {
         }
 
 
-        // 2. look for safe tiles which could become efficient if they have a certain value 
+        // 2. look for safe tiles which could become efficient if they have a certain value
         //if (result.length == 0) {
 
         //if (this.actions.length < 2) {
@@ -3799,7 +3799,7 @@ class EfficiencyHelper {
                     }
 
                     if (cl.tile.isAdjacent(tile)) {
-                        // first adjacent chord, or better adj chord or cheaper adj chord 
+                        // first adjacent chord, or better adj chord or cheaper adj chord
                         if (adjChord == null || adjChord.netBenefit < cl.netBenefit || adjChord.netBenefit == cl.netBenefit && adjChord.cost > cl.cost ||
                             adjChord.netBenefit == cl.netBenefit && adjChord.cost == cl.cost && adjChord.exposedTiles < cl.exposedTiles) {
                             //adjBenefit = cl.netBenefit;
@@ -4372,7 +4372,7 @@ class SequentialIterator {
             }
         }
 
-        // roll forward 
+        // roll forward
         while (this.index != this.numberBalls - 1) {
             this.index++;
             this.sample[this.index] = this.sample[this.index - 1] + 1;
@@ -4394,7 +4394,7 @@ const INDENT = "................................................................
 // globals used in this processing
 var processCount = 0; // how much work has been done
 var allSolutions; // this is class 'SolutionTable'
-var allTiles; // this is an array of the tiles being analysed 
+var allTiles; // this is an array of the tiles being analysed
 
 // cache details
 var cache = new Map();
@@ -4437,7 +4437,7 @@ class BruteForceAnalysis {
         this.writeToConsole("----- Brute Force Deep Analysis starting ----");
         this.writeToConsole(allSolutions.size() + " solutions in BruteForceAnalysis");
 
-        // create the top node 
+        // create the top node
         var top = this.buildTopNode(allSolutions); // top is class 'Node'
 
         if (top.getLivingLocations().length == 0) {
@@ -4717,7 +4717,7 @@ class Position {
         } else {
             // copy and update to reflect the new position
             this.position = p.position.slice();
-            //this.position.push(...p.position); 
+            //this.position.push(...p.position);
             this.position[index] = value + 50;
         }
 
@@ -4907,7 +4907,7 @@ class Node {
      * Calculate the number of winning lines if this move is played at this position
      * Used at top of the game tree
      */
-    getWinningLinesStart(move) { // move is class LivingLocation 
+    getWinningLinesStart(move) { // move is class LivingLocation
 
         //if we can never exceed the cutoff then no point continuing
         if (PRUNE_BF_ANALYSIS && (this.getSolutionSize() - move.mineCount <= this.winningLines)) {
@@ -4929,7 +4929,7 @@ class Node {
      * Calculate the number of winning lines if this move is played at this position
      * Used when exploring the game tree
      */
-    getWinningLines(depth, move, cutoff) { // move is class 'LivingLocation' 
+    getWinningLines(depth, move, cutoff) { // move is class 'LivingLocation'
 
         //console.log("At depth " + depth + " cutoff=" + cutoff);
 
@@ -4940,7 +4940,7 @@ class Node {
             return 0;
         }
 
-        var notMines = this.getSolutionSize() - move.mineCount; // number of solutions (at this node) which don't have a mine at this location 
+        var notMines = this.getSolutionSize() - move.mineCount; // number of solutions (at this node) which don't have a mine at this location
 
         // if the max possible winning lines is less than the current cutoff then no point doing the analysis
         if (PRUNE_BF_ANALYSIS && (result + notMines <= cutoff)) {
@@ -5019,7 +5019,7 @@ class Node {
                 child.bestLiving = null;
             }
 
-            // store the aggregate winning lines 
+            // store the aggregate winning lines
             result = result + child.winningLines;
 
             notMines = notMines - child.getSolutionSize(); // reduce the number of not mines
@@ -5040,7 +5040,7 @@ class Node {
      * this generates a list of Location that are still alive, (i.e. have more than one possible value) from a list of previously living locations
      * Index is the move which has just been played (in terms of the off-set to the position[] array)
      */
-    determineLivingLocations(liveLocs, index) { // liveLocs is a array of class 'LivingLocation' 
+    determineLivingLocations(liveLocs, index) { // liveLocs is a array of class 'LivingLocation'
 
         var living = [];
 
@@ -5134,7 +5134,7 @@ class SolutionTable {
 
 }
 
-// utility to sort an array 
+// utility to sort an array
 let subSort = (arr, i, n, sortFx) => [].concat(...arr.slice(0, i), ...arr.slice(i, i + n).sort(sortFx), ...arr.slice(i + n, arr.length));
 
 
@@ -5281,10 +5281,10 @@ async function solver(board, options) {
 
     var noMoves = 0;
     var cleanActions = []; // these are the actions to take
-    var fillerTiles = []; // this is used by the no-guess board generator 
+    var fillerTiles = []; // this is used by the no-guess board generator
     var otherActions = [];    // this is other Actions of interest
 
-    // allow the solver to bring back no moves 5 times. No moves is possible when playing no-flags 
+    // allow the solver to bring back no moves 5 times. No moves is possible when playing no-flags
     while (noMoves < 5 && cleanActions.length == 0) {
         noMoves++;
         var actions = await doSolve(board, options); // look for solutions
@@ -5348,7 +5348,7 @@ async function solver(board, options) {
 
     // **** functions below here ****
 
-    // this finds the best moves 
+    // this finds the best moves
     async function doSolve(board, options) {
 
         // find all the tiles which are revealed and have un-revealed / un-flagged adjacent squares
@@ -5510,7 +5510,7 @@ async function solver(board, options) {
         // If we have a full analysis then set the probabilities on the tile tooltips
         if (pe.fullAnalysis) {
 
-            // Set the probability for each tile on the edge 
+            // Set the probability for each tile on the edge
             for (var i = 0; i < pe.boxes.length; i++) {
                 for (var j = 0; j < pe.boxes[i].tiles.length; j++) {
                     pe.boxes[i].tiles[j].setProbability(pe.boxProb[i]);
@@ -5574,7 +5574,7 @@ async function solver(board, options) {
         // if we don't have a certain guess then look for ...
         if (pe.bestOnEdgeProbability != 1 && minesLeft > 1) {
 
-            // See if there are any unavoidable 2 tile 50/50 guesses 
+            // See if there are any unavoidable 2 tile 50/50 guesses
             const unavoidable5050a = pe.checkForUnavoidable5050();
             if (unavoidable5050a != null) {
                 result.push(new Action(unavoidable5050a.getX(), unavoidable5050a.getY(), unavoidable5050a.probability, ACTION_CLEAR));
@@ -5582,7 +5582,7 @@ async function solver(board, options) {
                 return addDeadTiles(result, pe.getDeadTiles());
             }
 
-            // look for any 50/50 or safe guesses 
+            // look for any 50/50 or safe guesses
             const unavoidable5050b = new FiftyFiftyHelper(board, pe.minesFound, options, pe.getDeadTiles(), witnessed, minesLeft).process();
             if (unavoidable5050b != null) {
                 result.push(new Action(unavoidable5050b.getX(), unavoidable5050b.getY(), unavoidable5050b.probability, ACTION_CLEAR));
@@ -5751,7 +5751,7 @@ async function solver(board, options) {
     function addDeadTiles(result, deadTiles) {
 
         // identify the dead tiles
-        for (var tile of deadTiles) { // show all dead tiles 
+        for (var tile of deadTiles) { // show all dead tiles
             if (tile.probability != 0) {
                 var action = new Action(tile.getX(), tile.getY(), tile.probability);
                 action.dead = true;
@@ -5911,7 +5911,7 @@ async function solver(board, options) {
         //     action.progress = progress;
         //     action.weight = action.prob * (1 + contribution * progress);
         //     // console.log(action);
-        //     tile.setProbability(action.prob, progress); 
+        //     tile.setProbability(action.prob, progress);
         //     if (action.commonClears != null && action.commonClears.length > 0) {
         //         for (var son of action.commonClears){
         //             // console.log(son);
@@ -5983,7 +5983,7 @@ async function solver(board, options) {
         //     var safePe = runProbabilityEngine(board, [tile]);
         //     var linkedTilesCount = 0;
 
-        //     tile.dominated = false;  // if tile 'a' being safe ==> tile 'b' & 'c' are safe and 'b' and 'c' are in the same box ==> 'b' is safer then 'a' 
+        //     tile.dominated = false;  // if tile 'a' being safe ==> tile 'b' & 'c' are safe and 'b' and 'c' are in the same box ==> 'b' is safer then 'a'
 
         //     for (var box of safePe.emptyBoxes) {
         //         if (box.contains(tile)) { // if the tile is in this box then ignore it
@@ -6452,7 +6452,7 @@ async function solver(board, options) {
 
     //     var safePe = runProbabilityEngine(board, [tile]);
     //     var linkedTilesCount = 0;
-    //     var dominated = false; // if tile 'a' being safe ==> tile 'b' & 'c' are safe and 'b' and 'c' are in the same box ==> 'b' is safer then 'a' 
+    //     var dominated = false; // if tile 'a' being safe ==> tile 'b' & 'c' are safe and 'b' and 'c' are in the same box ==> 'b' is safer then 'a'
 
     //     for (var box of safePe.emptyBoxes) {
     //         if (box.contains(tile)) { // if the tile is in this box then ignore it
@@ -6863,7 +6863,7 @@ class Action {
         this.dead = false;
         this.pruned = false;
 
-        // part of full analysis output, until then assume worst case 
+        // part of full analysis output, until then assume worst case
         this.progress = 0;
         this.expectedClears;
         this.weight = prob;
