@@ -128,4 +128,13 @@ function refreshBoard() {
             solver_status = refreshBoard();
         }
     });
+
+    const solve_btn = document.createElement("button");
+    solve_btn.innerHTML = "Solve";
+    solve_btn.onclick = function () {
+      if (!solver_status) {
+        solver_status = solveBoard();
+      }
+    };
+    document.getElementById("seo").append(solve_btn);
 })();
