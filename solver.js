@@ -230,9 +230,7 @@ class Tile {
         this.is_covered = true;
         this.value = 0;
         this.is_flagged = false;
-        this.foundBomb = false
-        this.is_bomb; // this gets set when the game is lost
-        this.exploded = false; // this gets set if this tile was the one clicked
+        this.foundBomb = false;
         this.index = index;
 
         this.onEdge = false;
@@ -241,22 +239,15 @@ class Tile {
         this.progress;
         this.weight;
         this.maxSolutions;
-        this.hintText = "";
-        this.hasHint = false;
         this.dominated = false;
 
         this.efficiencyValue; // the value we need to be to be chordable
         this.efficiencyProbability; // the probability of being that value
-        this.efficiencyText = "";
-
     }
 
     toJSON() {
         return new simplifiedTile(this);
     }
-    //reveal() {
-    //	this.is_covered = false;
-    //}
 
     getX() {
         return this.x;
@@ -266,84 +257,34 @@ class Tile {
         return this.y;
     }
 
-    // returns true if the tile provided is adjacent to this tile
     isAdjacent(tile) {
-
         var dx = Math.abs(this.x - tile.x);
         var dy = Math.abs(this.y - tile.y);
-
-        // adjacent and not equal
         if (dx < 2 && dy < 2 && !(dx == 0 && dy == 0)) {
             return true;
-        } else {
-            return false;
         }
-
+        return false;
     }
 
     isEqual(tile) {
-
         if (this.x == tile.x && this.y == tile.y) {
             return true;
-        } else {
-            return false;
         }
-
+        return false;
     }
 
     asText() {
         return "(" + this.x + "," + this.y + ")";
     }
 
-    getHintText() {
-
-        if (!this.hasHint) {
-            return "";
-        } else {
-            return this.hintText + this.efficiencyText;
-        }
-
-    }
-
-    getHasHint() {
-        return this.hasHint;
-    }
-
     setProbability(prob, progress) {
         this.probability = prob;
-        this.hasHint = true;
-
-        if (prob == 1) {
-            this.hintText = "Clear";
-        } else if (prob == 0) {
-            this.hintText = "Mine";
-        } else if (progress == null) {
-            this.hintText = "\n" + (prob * 100).toFixed(2) + "% safe";
-        } else {
-            this.hintText = "\n" + (prob * 100).toFixed(2) + "% safe" + "\n" + (progress * 100).toFixed(2) + "% progress"
-        }
-
+        this.progress = progress;
     }
 
     setValueProbability(value, probability) {
         this.efficiencyValue = value;
         this.efficiencyProbability = probability;
-
-        this.efficiencyText = "\n" + (probability * 100).toFixed(2) + "% value '" + value + "'"
-    }
-
-    //getProbability() {
-    //    return this.probability;
-    //}
-
-    clearHint() {
-        this.onEdge = false;
-        this.hasHint = false;
-        this.hintText = "";
-        this.efficiencyValue = null;
-        this.efficiencyProbability = 0;
-        this.efficiencyText = "";
-        this.probability = 0;
     }
 
     setOnEdge() {
@@ -363,25 +304,8 @@ class Tile {
         this.is_covered = false;
     }
 
-    setValueOnly(value) {
-        this.value = value;
-    }
-
     getValue() {
         return this.value;
-    }
-
-    rotateValue(delta) {
-
-        var newValue = this.value + delta;
-
-        if (newValue < 0) {
-            newValue = 8;
-        } else if (newValue > 8) {
-            newValue = 0;
-        }
-
-        this.setValue(newValue);
     }
 
     toggleFlag() {
@@ -394,13 +318,11 @@ class Tile {
 
     // this is set when the solver discovers a bomb - trying to separate the discovery of a bomb from the flagging of a tile
     setFoundBomb() {
-        //console.log(this.asText() + " set to Found Bomb");
         this.foundBomb = true;
     }
 
     // this is used when a tile is speculatively set to a mine to see if the board is still valid
     unsetFoundBomb() {
-        //console.log(this.asText() + " set to not Found Bomb");
         this.foundBomb = false;
     }
 
@@ -408,19 +330,12 @@ class Tile {
         return this.foundBomb;
     }
 
-    // this is used to display the bombs when the game is lost
-    setBomb(bomb) {
-        this.is_bomb = bomb;
-    }
-
-    // this is used to display the exploded bomb when the game is lost
-    setBombExploded() {
-        this.is_bomb = true;
-        this.exploded = true;
-    }
-
-    isBomb() {
-        return this.is_bomb;
+    clearHint() {
+        this.onEdge = false;
+        this.hasHint = false;
+        this.efficiencyValue = null;
+        this.efficiencyProbability = 0;
+        this.probability = 0;
     }
 }
 
@@ -432,61 +347,24 @@ class simplifiedTile {
     }
 }
 
-
 class Board {
-
-    constructor(id, width, height, num_bombs, seed, gameType) {
-
-        //console.log("Creating a new board with id=" + id + " ...");
-
+    constructor(width, height, num_bombs, seed, gameType) {
         this.MAX = 4294967295;
 
-        this.id = id;
         this.gameType = gameType;
         this.width = width;
         this.height = height;
         this.num_bombs = num_bombs;
         this.seed = seed;
-
         this.tiles = [];
         this.started = false;
         this.bombs_left = this.num_bombs;
-        //this.tiles_left = this.width * this.height - this.num_bombs;
         this.init_tiles();
 
-        this.gameover = false;
-        this.won = false;
-
         this.highDensity = false;
-
-        //console.log("... board created");
-
-    }
-
-    isStarted() {
-        return this.started;
-    }
-
-    setGameLost() {
-        this.gameover = true;
-    }
-
-    setGameWon() {
-        this.gameover = true;
-        this.won = true;
-    }
-
-    isGameover() {
-        return this.gameover;
-    }
-
-
-    getID() {
-        return this.id;
     }
 
     setStarted() {
-
         if (this.start) {
             console.log("Logic error: starting the same game twice");
             return;
@@ -496,59 +374,27 @@ class Board {
     }
 
     setHighDensity(tilesLeft, minesLeft) {
-
         if (minesLeft * 5 > tilesLeft * 2) {
             this.highDensity = true;
         } else {
             this.highDensity = false;
         }
-
     }
 
     isHighDensity() {
         return this.highDensity;
     }
 
-    xy_to_index(x, y) {
-        return y * this.width + x;
-    }
-
     getTileXY(x, y) {
-
-        var index = this.xy_to_index(x, y);
-
-        return this.tiles[index];
-
+        return this.tiles[y * this.width + x];
     }
 
     getTile(index) {
-
         return this.tiles[index];
-
-    }
-
-    // true if number of flags == tiles value
-    // and number of unrevealed > 0
-    canChord(tile) {
-
-        var flagCount = 0;
-        var coveredCount = 0;
-        for (var adjTile of this.getAdjacent(tile)) {
-            if (adjTile.isFlagged()) {
-                flagCount++;
-            }
-            if (adjTile.isCovered() && !adjTile.isFlagged()) {
-                coveredCount++;
-            }
-        }
-
-        return (flagCount == tile.getValue()) && (coveredCount > 0);
-
     }
 
     // return number of confirmed mines adjacent to this tile
     adjacentFoundMineCount(tile) {
-
         var mineCount = 0;
         for (var adjTile of this.getAdjacent(tile)) {
             if (adjTile.isSolverFoundBomb()) {
@@ -557,12 +403,10 @@ class Board {
         }
 
         return mineCount;
-
     }
 
     // return number of flags adjacent to this tile
     adjacentFlagsPlaced(tile) {
-
         var flagCount = 0;
         for (var adjTile of this.getAdjacent(tile)) {
             if (adjTile.isFlagged()) {
@@ -571,12 +415,10 @@ class Board {
         }
 
         return flagCount;
-
     }
 
     // return number of covered tiles adjacent to this tile
     adjacentCoveredCount(tile) {
-
         var coveredCount = 0;
         for (var adjTile of this.getAdjacent(tile)) {
             //if (adjTile.isCovered() && !adjTile.isFlagged()) {
@@ -586,24 +428,10 @@ class Board {
         }
 
         return coveredCount;
-
-    }
-
-    // header for messages sent to the server
-    getMessageHeader() {
-        return {
-            "id": this.id,
-            "width": this.width,
-            "height": this.height,
-            "mines": this.num_bombs,
-            "seed": this.seed,
-            "gametype": this.gameType
-        };
     }
 
     // returns all the tiles adjacent to this tile
     getAdjacent(tile) {
-
         var col = tile.getX();
         var row = tile.getY();
 
@@ -613,12 +441,13 @@ class Board {
         var first_col = Math.max(0, col - 1);
         var last_col = Math.min(this.width - 1, col + 1);
 
-        var result = []
+        var result = [];
 
         for (var r = first_row; r <= last_row; r++) {
             for (var c = first_col; c <= last_col; c++) {
                 var i = this.width * r + c;
-                if (!(r == row && c == col)) { // don't include ourself
+                if (!(r == row && c == col)) {
+                    // don't include ourself
                     result.push(this.tiles[i]);
                 }
             }
@@ -627,92 +456,19 @@ class Board {
         return result;
     }
 
-    getFlagsPlaced() {
-
-        var tally = 0;
-        for (var i = 0; i < this.tiles.length; i++) {
-            if (this.tiles[i].isFlagged()) {
-                tally++;
-            }
-        }
-
-        return tally;
-    }
-
-    // sets up the initial tiles
     init_tiles() {
-
         for (var y = 0; y < this.height; y++) {
             for (var x = 0; x < this.width; x++) {
                 this.tiles.push(new Tile(x, y, y * this.width + x));
             }
         }
-
-        //console.log(this.tiles.length + " tiles added to board");
     }
 
-    setAllZero() {
-        for (var i = 0; i < this.tiles.length; i++) {
-            this.tiles[i].setValue(0);
-        }
-    }
-
-    resetForAnalysis() {
-
-        for (var i = 0; i < this.tiles.length; i++) {
-            var tile = this.tiles[i];
-            if (tile.isFlagged()) {
-                tile.foundBomb = true;
-            } else {
-                tile.foundBomb = false;
-            }
-        }
-
-    }
-
-    getHashValue() {
-
-        var hash = (31 * 31 * 31 * this.num_bombs + 31 * 31 * this.getFlagsPlaced() + 31 * this.width + this.height) % this.MAX;
-
-        for (var i = 0; i < this.tiles.length; i++) {
-            var tile = this.tiles[i];
-            if (tile.isFlagged()) {
-                hash = (31 * hash + 13) % this.MAX;
-            } else if (tile.isCovered()) {
-                hash = (31 * hash + 12) % this.MAX;
-            } else {
-                hash = (31 * hash + tile.getValue()) % this.MAX;
-            }
-        }
-
-        return hash;
-    }
-
-    // returns a string that represents this board state which can be save and restored later
-    getStateData() {
-
-        // wip
-
-        for (var i = 0; i < this.tiles.length; i++) {
-            var tile = this.tiles[i];
-            if (tile.isFlagged()) {
-                hash = (31 * hash + 13) % this.MAX;
-            } else if (tile.isCovered()) {
-                hash = (31 * hash + 12) % this.MAX;
-            } else {
-                hash = (31 * hash + tile.getValue()) % this.MAX;
-            }
-        }
-
-
-    }
-
+    // TODO: Unused function, may generate a auto-moving board for future use
     findAutoMove() {
-
         var result = new Map();
 
         for (var i = 0; i < this.tiles.length; i++) {
-
             var tile = this.getTile(i);
 
             if (tile.isFlagged()) {
@@ -738,33 +494,49 @@ class Board {
                 }
             }
 
-            if (needsWork) { // the witness still has some unrevealed adjacent tiles
-                if (tile.getValue() == flagCount) { // can clear around here
+            if (needsWork) {
+                // the witness still has some unrevealed adjacent tiles
+                if (tile.getValue() == flagCount) {
+                    // can clear around here
                     for (var j = 0; j < adjTiles.length; j++) {
                         var adjTile = adjTiles[j];
                         if (adjTile.isCovered() && !adjTile.isFlagged()) {
-                            result.set(adjTile.index, new Action(adjTile.getX(), adjTile.getY(), 1, ACTION_CLEAR));
+                            result.set(
+                                adjTile.index,
+                                new Action(
+                                    adjTile.getX(),
+                                    adjTile.getY(),
+                                    1,
+                                    ACTION_CLEAR
+                                )
+                            );
                         }
                     }
-
-                } else if (tile.getValue() == flagCount + coveredCount) { // can place all flags
+                } else if (tile.getValue() == flagCount + coveredCount) {
+                    // can place all flags
                     for (var j = 0; j < adjTiles.length; j++) {
                         var adjTile = adjTiles[j];
-                        if (adjTile.isCovered() && !adjTile.isFlagged()) { // if covered and isn't flagged
+                        if (adjTile.isCovered() && !adjTile.isFlagged()) {
+                            // if covered and isn't flagged
                             adjTile.setFoundBomb(); // Must be a bomb
-                            result.set(adjTile.index, new Action(adjTile.getX(), adjTile.getY(), 0, ACTION_FLAG));
+                            result.set(
+                                adjTile.index,
+                                new Action(
+                                    adjTile.getX(),
+                                    adjTile.getY(),
+                                    0,
+                                    ACTION_FLAG
+                                )
+                            );
                         }
                     }
                 }
             }
-
         }
 
         // send it back as an array
         return Array.from(result.values());
-
     }
-
 }
 
 // ===================== SOLVER =====================
