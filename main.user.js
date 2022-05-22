@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MOHelper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.4
+// @version      0.2.5
 // @description  Press Z for a brand new world!
 // @author       Tony Xiang
 // @license      AGPL-3.0
@@ -26,7 +26,7 @@ function solveBoard() {
 	let mineCovered = G68.c3.o;
 	let flagGrid = G68.c3.f;
 	let isNF = true;
-	let board = new Board(1, width, height, mines, "", "safe");
+	let board = new Board(width, height, mines, "", "safe");
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
 			const tile = board.getTileXY(x, y);
