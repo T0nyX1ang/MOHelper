@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MOHelper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Press Z for a brand new world!
 // @author       Tony Xiang
 // @license      AGPL-3.0
@@ -24,6 +24,7 @@ function solveBoard() {
 	let height = G68.s4;
 	let mineGrid = G68.c3.t;
 	let mineCovered = G68.c3.o;
+	let flagGrid = G68.c3.f;
 	let isNF = true;
 	let board = new Board(1, width, height, mines, "", "safe");
 	for (let y = 0; y < height; y++) {
@@ -31,7 +32,8 @@ function solveBoard() {
 			const tile = board.getTileXY(x, y);
 			const k = mineGrid[x * height + y];
 			const c = mineCovered[x * height + y];
-			if (k === 9) {
+			const f = flagGrid[x * height + y];
+			if (k === 9 || f === 1) {
 				// flag
 				tile.toggleFlag();
 				board.bombs_left--;
@@ -50,7 +52,7 @@ function solveBoard() {
 		}
 	}
 
-	let result = solver(board, { verbose: false, playStyle: isNF ? 2 : 1 });
+	let result = solver(board, { verbose: false, playStyle: 2 });
 	result.then((value) => {
 		let actions = value.actions;
 
