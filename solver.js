@@ -349,8 +349,6 @@ class simplifiedTile {
 
 class Board {
     constructor(width, height, num_bombs, seed, gameType) {
-        this.MAX = 4294967295;
-
         this.gameType = gameType;
         this.width = width;
         this.height = height;
@@ -655,8 +653,8 @@ class ProbabilityEngine {
             }
             this.boxWitnesses.push(boxWit); // all witnesses are needed for the probability engine
         }
-        this.writeToConsole("Pruned " + pruned + " witnesses as duplicates");
-        this.writeToConsole("There are " + this.boxWitnesses.length + " Box witnesses");
+        showMessage("Pruned " + pruned + " witnesses as duplicates");
+        showMessage("There are " + this.boxWitnesses.length + " Box witnesses");
 
         // allocate each of the witnessed squares to a box
         var uid = 0;
@@ -751,7 +749,7 @@ class ProbabilityEngine {
                     }
                 }
                 if (unavoidable) {
-                    this.writeToConsole("Tile " + witness.tile.asText() + " is an unavoidable guess");
+                    showMessage("Tile " + witness.tile.asText() + " is an unavoidable guess");
                     return witness.tiles[0];
                 }
             }
@@ -819,7 +817,7 @@ class ProbabilityEngine {
                     }
                 }
                 if (unavoidable) {
-                    this.writeToConsole("Tile " + witness.tile.asText() + " is an unavoidable guess");
+                    showMessage("Tile " + witness.tile.asText() + " is an unavoidable guess");
                     return witness.tiles[0];
                 }
 
@@ -864,10 +862,10 @@ class ProbabilityEngine {
 
                                 if (extension.closed2) {
                                     if (extensions % 2 == 0 && this.noTrouble(link, area5050)) {
-                                        this.writeToConsole("Tile " + openTile.asText() + " is an unavoidable guess, with " + extensions + " extensions");
+                                        showMessage("Tile " + openTile.asText() + " is an unavoidable guess, with " + extensions + " extensions");
                                         return area5050[0];
                                     } else {
-                                        this.writeToConsole("Tile " + openTile.asText() + " is a closed extension with " + (extensions + 1) + " parts");
+                                        showMessage("Tile " + openTile.asText() + " is a closed extension with " + (extensions + 1) + " parts");
                                         openTile = null;
                                     }
                                 } else { // found an open extension, now look for an extension for this
@@ -886,10 +884,10 @@ class ProbabilityEngine {
 
                                 if (extension.closed1) {
                                     if (extensions % 2 == 0 && this.noTrouble(link, area5050)) {
-                                        this.writeToConsole("Tile " + openTile.asText() + " is an unavoidable guess, with " + extensions + " extensions");
+                                        showMessage("Tile " + openTile.asText() + " is an unavoidable guess, with " + extensions + " extensions");
                                         return area5050[0];
                                     } else {
-                                        this.writeToConsole("Tile " + openTile.asText() + " is a closed extension with " + (extensions + 1) + " parts");
+                                        showMessage("Tile " + openTile.asText() + " is a closed extension with " + (extensions + 1) + " parts");
                                         openTile = null;
                                     }
 
@@ -931,7 +929,7 @@ class ProbabilityEngine {
                 }
             }
             if (adjCount % 2 != 0) {
-                this.writeToConsole("Trouble Tile " + tile.asText() + " isn't adjacent to an even number of tiles in the extended candidate 50/50, adjacent " + adjCount + " of " + area.length);
+                showMessage("Trouble Tile " + tile.asText() + " isn't adjacent to an even number of tiles in the extended candidate 50/50, adjacent " + adjCount + " of " + area.length);
                 return false;
             }
         }
@@ -993,9 +991,9 @@ class ProbabilityEngine {
         }
 
         if (this.fullAnalysis) {
-            this.writeToConsole("The probability engine did a full analysis - probability data is available")
+            showMessage("The probability engine did a full analysis - probability data is available")
         } else {
-            this.writeToConsole("The probability engine did a truncated analysis - probability data is not available")
+            showMessage("The probability engine did a truncated analysis - probability data is not available")
         }
 
         this.duration = Date.now() - peStart;
@@ -1196,7 +1194,7 @@ class ProbabilityEngine {
         //this.checkCandidateDeadLocations();
 
         if (this.workingProbs.length == 0) {
-            //this.writeToConsole("working probabilites list is empty!!", true);
+            //showMessage("working probabilites list is empty!!", true);
             this.heldProbs = [];
             return;
         }
@@ -1313,7 +1311,7 @@ class ProbabilityEngine {
         result.push(current);
         //}
 
-        this.writeToConsole(target.length + " Probability Lines compressed to " + result.length);
+        showMessage(target.length + " Probability Lines compressed to " + result.length);
 
         return result;
 
@@ -1390,7 +1388,7 @@ class ProbabilityEngine {
         if (bestWitness != null) {
             return new NextWitness(bestWitness);
         } else {
-            this.writeToConsole("Ending independent edge");
+            showMessage("Ending independent edge");
         }
 
         // if we are down here then there is no witness which is on the boundary, so we have processed a complete set of independent witnesses
@@ -1416,7 +1414,7 @@ class ProbabilityEngine {
 
                             var tile = this.boxes[i].tiles[j];
 
-                            this.writeToConsole(tile.asText() + " has been determined to be locally clear");
+                            showMessage(tile.asText() + " has been determined to be locally clear");
                             //tile.setProbability(1);
                             this.localClears.push(tile);
                         }
@@ -1436,7 +1434,7 @@ class ProbabilityEngine {
 
                             var tile = this.boxes[i].tiles[j];
 
-                            this.writeToConsole(tile.asText() + " has been determined to be locally a mine");
+                            showMessage(tile.asText() + " has been determined to be locally a mine");
                             //tile.setProbability(0);
                             this.minesFound.push(tile);
                         }
@@ -1469,7 +1467,7 @@ class ProbabilityEngine {
         // get an unprocessed witness
         var nw = this.findFirstWitness();
         if (nw != null) {
-            this.writeToConsole("Starting a new independent edge");
+            showMessage("Starting a new independent edge");
         }
 
         // only crunch it down for non-trivial probability lines unless it is the last set - this is an efficiency decision
@@ -1503,13 +1501,13 @@ class ProbabilityEngine {
                 }
             }
             if (completeScan) {
-                this.writeToConsole("This is a complete scan");
+                showMessage("This is a complete scan");
             } else {
-                this.writeToConsole("This is not a complete scan");
+                showMessage("This is not a complete scan");
             }
         } else {
             completeScan = false;
-            this.writeToConsole("This is not a complete scan because there are squares off the edge");
+            showMessage("This is not a complete scan because there are squares off the edge");
         }
 
 
@@ -1538,14 +1536,14 @@ class ProbabilityEngine {
             if (boxesInScope == 0) {
                 continue;
             } else if (boxesInScope != dc.goodBoxes.length + dc.badBoxes.length) {
-                this.writeToConsole("Location " + dc.candidate.asText() + " has some boxes in scope and some out of scope so assumed alive");
+                showMessage("Location " + dc.candidate.asText() + " has some boxes in scope and some out of scope so assumed alive");
                 dc.isAlive = true;
                 continue;
             }
 
             //if we can't do the check because the edge has been compressed mid process then assume alive
             if (!checkPossible) {
-                this.writeToConsole("Location " + dc.candidate.asText() + " was on compressed edge so assumed alive");
+                showMessage("Location " + dc.candidate.asText() + " was on compressed edge so assumed alive");
                 dc.isAlive = true;
                 continue;
             }
@@ -1580,7 +1578,7 @@ class ProbabilityEngine {
 
                     // a bad box must have either no mines or all mines
                     if (pl.mineBoxCount[b.uid] != 0 && pl.mineBoxCount[b.uid] != neededMines) {
-                        this.writeToConsole("Location " + dc.candidate.asText() + " is not dead because a bad box has neither zero or all mines: " + pl.mineBoxCount[b.uid] + "/" + neededMines);
+                        showMessage("Location " + dc.candidate.asText() + " is not dead because a bad box has neither zero or all mines: " + pl.mineBoxCount[b.uid] + "/" + neededMines);
                         okay = false;
                         break line;
                     }
@@ -1598,7 +1596,7 @@ class ProbabilityEngine {
                     dc.firstCheck = false;
                 } else {
                     if (dc.total != tally) {
-                        this.writeToConsole("Location " + dc.candidate.asText() + " is not dead because the sum of mines in good boxes is not constant. Was " +
+                        showMessage("Location " + dc.candidate.asText() + " is not dead because the sum of mines in good boxes is not constant. Was " +
                                             dc.total + " now " + tally + ". Mines in probability line " + pl.mineCount);
                         okay = false;
                         break;
@@ -1657,7 +1655,7 @@ class ProbabilityEngine {
             }
 
             if (dc.goodBoxes.length == 0 && dc.badBoxes.length == 0) {
-                this.writeToConsole(dc.candidate.asText() + " is lonely since it has no open tiles around it");
+                showMessage(dc.candidate.asText() + " is lonely since it has no open tiles around it");
                 this.lonelyTiles.push(dc);
             } else {
                 this.deadCandidates.push(dc);
@@ -1668,7 +1666,7 @@ class ProbabilityEngine {
 
         for (var i = 0; i < this.deadCandidates.length; i++) {
             var dc = this.deadCandidates[i];
-            this.writeToConsole(dc.candidate.asText() + " is candidate dead with " + dc.goodBoxes.length + " good boxes and " + dc.badBoxes.length + " bad boxes");
+            showMessage(dc.candidate.asText() + " is candidate dead with " + dc.goodBoxes.length + " good boxes and " + dc.badBoxes.length + " bad boxes");
         }
 
     }
@@ -1682,7 +1680,7 @@ class ProbabilityEngine {
             }
         }
 
-        this.writeToConsole("ERROR - tile " + tile.asText() + " doesn't belong to a box");
+        showMessage("ERROR - tile " + tile.asText() + " doesn't belong to a box");
 
         return null;
     }
@@ -1773,12 +1771,12 @@ class ProbabilityEngine {
 
         // if this edge is everything then it isn't an isolated edge
         //if (everything) {
-        //    this.writeToConsole("Not isolated because the edge is everything");
+        //    showMessage("Not isolated because the edge is everything");
         //    return false;
         //}
 
         if (this.isolatedEdgeBruteForce != null && edgeTiles.size >= this.isolatedEdgeBruteForce.tiles.length) {
-            this.writeToConsole("Already found an isolated edge of smaller size");
+            showMessage("Already found an isolated edge of smaller size");
         }
 
         // check whether every tile adjacent to the tiles on the edge is itself on the edge
@@ -1790,7 +1788,7 @@ class ProbabilityEngine {
                     for (var k = 0; k < adjTiles.length; k++) {
                         var adjTile = adjTiles[k];
                         if (adjTile.isCovered() && !adjTile.isSolverFoundBomb() && !edgeTiles.has(adjTile)) {
-                            this.writeToConsole("Not isolated because a tile's adjacent tiles isn't on the edge: " + tile.asText() + " ==> " + adjTile.asText());
+                            showMessage("Not isolated because a tile's adjacent tiles isn't on the edge: " + tile.asText() + " ==> " + adjTile.asText());
                             return false;
                         }
                     }
@@ -1798,7 +1796,7 @@ class ProbabilityEngine {
             }
         }
 
-        this.writeToConsole("*** Isolated Edge found ***");
+        showMessage("*** Isolated Edge found ***");
 
         var tiles = [...edgeTiles];
         var witnesses = [...edgeWitnesses];
@@ -1853,7 +1851,7 @@ class ProbabilityEngine {
             }
         }
 
-        this.writeToConsole("Calculated " + this.independentWitnesses.length + " independent witnesses");
+        showMessage("Calculated " + this.independentWitnesses.length + " independent witnesses");
 
     }
 
@@ -1947,7 +1945,7 @@ class ProbabilityEngine {
         for (var i = 0; i < this.lonelyTiles.length; i++) {
             var dc = this.lonelyTiles[i];
             if (this.boxProb[dc.myBox.uid] != 0 && this.boxProb[dc.myBox.uid] != 1) { // a lonely tile is dead if not a definite mine or safe
-                this.writeToConsole("PE found Lonely tile " + dc.candidate.asText() + " is dead with value +" + dc.total);
+                showMessage("PE found Lonely tile " + dc.candidate.asText() + " is dead with value +" + dc.total);
                 this.deadTiles.push(dc.candidate);
             }
         }
@@ -1956,7 +1954,7 @@ class ProbabilityEngine {
         for (var i = 0; i < this.deadCandidates.length; i++) {
             var dc = this.deadCandidates[i];
             if (!dc.isAlive && this.boxProb[dc.myBox.uid] != 0 && this.boxProb[dc.myBox.uid] != 1) { // if it is dead and not a definite mine or safe
-                this.writeToConsole("PE found " + dc.candidate.asText() + " to be dead with value +" + dc.total);
+                showMessage("PE found " + dc.candidate.asText() + " to be dead with value +" + dc.total);
                 this.deadTiles.push(dc.candidate);
             }
         }
@@ -2026,11 +2024,11 @@ class ProbabilityEngine {
 
         this.bestProbability = Math.max(this.bestOnEdgeProbability, this.offEdgeProbability);;
 
-        this.writeToConsole("Safe tiles " + this.localClears.length + ", Mines found " + this.minesFound.length);
-        this.writeToConsole("Off edge probability is " + this.offEdgeProbability);
-        this.writeToConsole("Best on edge probability is " + this.bestOnEdgeProbability);
-        this.writeToConsole("Best probability is " + this.bestProbability);
-        this.writeToConsole("Game has  " + this.finalSolutionsCount + " candidate solutions");
+        showMessage("Safe tiles " + this.localClears.length + ", Mines found " + this.minesFound.length);
+        showMessage("Off edge probability is " + this.offEdgeProbability);
+        showMessage("Best on edge probability is " + this.bestOnEdgeProbability);
+        showMessage("Best probability is " + this.bestProbability);
+        showMessage("Game has  " + this.finalSolutionsCount + " candidate solutions");
 
         this.fullAnalysis = true;
 
@@ -2056,7 +2054,7 @@ class ProbabilityEngine {
             test = this.bestProbability * freshhold;
         }
 
-        this.writeToConsole("Best probability is " + this.bestProbability + " freshhold is " + test);
+        showMessage("Best probability is " + this.bestProbability + " freshhold is " + test);
 
         for (var i = 0; i < this.boxProb.length; i++) {
             if (this.boxProb[i] >= test) {
@@ -2076,7 +2074,7 @@ class ProbabilityEngine {
                     if (!dead || this.boxProb[i] == 1) { // if not dead or 100% safe then use the tile
                         best.push(new Action(squ.x, squ.y, this.boxProb[i], ACTION_CLEAR));
                     } else {
-                        this.writeToConsole("Tile " + squ.asText() + " is ignored because it is dead");
+                        showMessage("Tile " + squ.asText() + " is ignored because it is dead");
                     }
 
                 }
@@ -2113,19 +2111,6 @@ class ProbabilityEngine {
         return true;
 
     }
-
-    writeToConsole(text, always) {
-
-        if (always == null) {
-            always = false;
-        }
-
-        if (this.verbose || always) {
-            console.log(text);
-        }
-
-    }
-
 }
 
 class MergeSorter {
@@ -3172,9 +3157,9 @@ class FiftyFiftyHelper {
                 tile2.unsetFoundBomb();
 
                 if (counter.finalSolutionsCount != 0) {
-                    this.writeToConsole(tile1.asText() + " and " + tile2.asText() + " can support 2 mines");
+                    showMessage(tile1.asText() + " and " + tile2.asText() + " can support 2 mines");
                 } else {
-                    this.writeToConsole(tile1.asText() + " and " + tile2.asText() + " can not support 2 mines, we should guess here immediately");
+                    showMessage(tile1.asText() + " and " + tile2.asText() + " can not support 2 mines, we should guess here immediately");
                     return tile1;
                 }
 
@@ -3208,9 +3193,9 @@ class FiftyFiftyHelper {
                 tile2.unsetFoundBomb();
 
                 if (counter.finalSolutionsCount != 0) {
-                    this.writeToConsole(tile1.asText() + " and " + tile2.asText() + " can support 2 mines");
+                    showMessage(tile1.asText() + " and " + tile2.asText() + " can support 2 mines");
                 } else {
-                    this.writeToConsole(tile1.asText() + " and " + tile2.asText() + " can not support 2 mines, we should guess here immediately");
+                    showMessage(tile1.asText() + " and " + tile2.asText() + " can not support 2 mines, we should guess here immediately");
                     return tile1;
                 }
 
@@ -3251,7 +3236,7 @@ class FiftyFiftyHelper {
                     continue; // this skips the rest of the logic below this in the for-loop
                 }
 
-                this.writeToConsole(tiles[0].asText() + " " + tiles[1].asText() + " " + tiles[2].asText() + " " + tiles[3].asText() + " is candidate box 50/50");
+                showMessage(tiles[0].asText() + " " + tiles[1].asText() + " " + tiles[2].asText() + " " + tiles[3].asText() + " is candidate box 50/50");
 
                 // keep track of which tiles are risky - once all 4 are then not a pseudo-50/50
                 var riskyTiles = 0;
@@ -3269,7 +3254,7 @@ class FiftyFiftyHelper {
                     }
 
                     if (!this.isWitnessed(tiles[l])) {
-                        this.writeToConsole(tiles[l].asText() + " has no witnesses");
+                        showMessage(tiles[l].asText() + " has no witnesses");
                         okay = false;
                         break;
                     }
@@ -3278,7 +3263,7 @@ class FiftyFiftyHelper {
                     continue;
                 }
                 if (allDead) {
-                    this.writeToConsole("All tiles in the candidate are dead");
+                    showMessage("All tiles in the candidate are dead");
                     continue
                 }
 
@@ -3313,7 +3298,7 @@ class FiftyFiftyHelper {
 
                     // only run if this pattern can discover something we don't already know
                     if (!run) {
-                        this.writeToConsole("Pattern " + k + " skipped");
+                        showMessage("Pattern " + k + " skipped");
                         continue;
                     }
 
@@ -3332,7 +3317,7 @@ class FiftyFiftyHelper {
 
                     // if it is then mark each mine tile as risky
                     if (counter.finalSolutionsCount != 0) {
-                        this.writeToConsole("Pattern " + k + " is valid");
+                        showMessage("Pattern " + k + " is valid");
                         for (var l = 0; l < 4; l++) {
                             if (PATTERNS[k][l]) {
                                 if (!risky[l]) {
@@ -3345,7 +3330,7 @@ class FiftyFiftyHelper {
                             break;
                         }
                     } else {
-                        this.writeToConsole("Pattern " + k + " is not valid");
+                        showMessage("Pattern " + k + " is not valid");
                     }
                 }
 
@@ -3354,7 +3339,7 @@ class FiftyFiftyHelper {
                     for (var l = 0; l < 4; l++) {
                         // if not risky and not dead then select it
                         if (!risky[l]) {
-                            this.writeToConsole(tiles[0].asText() + " " + tiles[1].asText() + " " + tiles[2].asText() + " " + tiles[3].asText() + " is pseudo 50/50 - " + tiles[l].asText() + " is not risky");
+                            showMessage(tiles[0].asText() + " " + tiles[1].asText() + " " + tiles[2].asText() + " " + tiles[3].asText() + " is pseudo 50/50 - " + tiles[l].asText() + " is not risky");
                             return tiles[l];
                         }
 
@@ -3370,7 +3355,7 @@ class FiftyFiftyHelper {
             mine.unsetFoundBomb();
         }
 
-        this.writeToConsole("5050 checker took " + this.duration + " milliseconds");
+        showMessage("5050 checker took " + this.duration + " milliseconds");
 
         return null;
 
@@ -3417,7 +3402,7 @@ class FiftyFiftyHelper {
 
     }
 
-    writeToConsole(text, always) {
+    showMessage(text, always) {
 
         if (always == null) {
             always = false;
@@ -4206,8 +4191,8 @@ class BruteForceAnalysis {
 
         var start = performance.now();
 
-        this.writeToConsole("----- Brute Force Deep Analysis starting ----");
-        this.writeToConsole(allSolutions.size() + " solutions in BruteForceAnalysis");
+        showMessage("----- Brute Force Deep Analysis starting ----");
+        showMessage(allSolutions.size() + " solutions in BruteForceAnalysis");
 
         // create the top node
         var top = this.buildTopNode(allSolutions); // top is class 'Node'
@@ -4240,9 +4225,9 @@ class BruteForceAnalysis {
             var singleProb = (allSolutions.size() - move.mineCount) / allSolutions.size();
 
             if (move.pruned) {
-                this.writeToConsole(move.index + " " + allTiles[move.index].asText() + " is living with " + move.count + " possible values and probability " + this.percentage(singleProb) + ", this location was pruned (max winning lines " + winningLines + ")");
+                showMessage(move.index + " " + allTiles[move.index].asText() + " is living with " + move.count + " possible values and probability " + this.percentage(singleProb) + ", this location was pruned (max winning lines " + winningLines + ")");
             } else {
-                this.writeToConsole(move.index + " " + allTiles[move.index].asText() + " is living with " + move.count + " possible values and probability " + this.percentage(singleProb) + ", winning lines " + winningLines);
+                showMessage(move.index + " " + allTiles[move.index].asText() + " is living with " + move.count + " possible values and probability " + this.percentage(singleProb) + ", winning lines " + winningLines);
             }
 
             if (processCount < BRUTE_FORCE_ANALYSIS_MAX_NODES) {
@@ -4265,16 +4250,16 @@ class BruteForceAnalysis {
             this.winChance = best / allSolutions.size();
             this.completed = true;
             if (true) {
-                this.writeToConsole("--------- Probability Tree dump start ---------");
+                showMessage("--------- Probability Tree dump start ---------");
                 this.showTree(0, 0, top);
-                this.writeToConsole("---------- Probability Tree dump end ----------");
+                showMessage("---------- Probability Tree dump end ----------");
             }
         }
 
         var end = performance.now();;
-        this.writeToConsole("Total nodes in cache = " + cache.size + ", total cache hits = " + cacheHit + ", total winning lines saved = " + cacheWinningLines);
-        this.writeToConsole("process took " + (end - start) + " milliseconds and explored " + processCount + " nodes");
-        this.writeToConsole("----- Brute Force Deep Analysis finished ----");
+        showMessage("Total nodes in cache = " + cache.size + ", total cache hits = " + cacheHit + ", total winning lines saved = " + cacheWinningLines);
+        showMessage("process took " + (end - start) + " milliseconds and explored " + processCount + " nodes");
+        showMessage("----- Brute Force Deep Analysis finished ----");
 
         // clear down the cache
         cache.clear();
@@ -4424,7 +4409,7 @@ class BruteForceAnalysis {
         if (node.bestLiving == null) {
             var line = INDENT.substring(0, depth * 3) + condition + " Solve chance " + node.getProbability();
 
-            this.writeToConsole(line);
+            showMessage(line);
             //console.log(line);
             return;
         }
@@ -4435,7 +4420,7 @@ class BruteForceAnalysis {
 
 
         var line = INDENT.substring(0, depth * 3) + condition + " play " + loc.asText() + " Survival chance " + prob + ", Solve chance " + node.getProbability();
-        this.writeToConsole(line);
+        showMessage(line);
 
         //console.log(line);
 
@@ -4463,7 +4448,7 @@ class BruteForceAnalysis {
         return this.allDead;
     }
 
-    writeToConsole(text) {
+    showMessage(text) {
         if (this.verbose) {
             console.log(text);
         }
@@ -5033,11 +5018,11 @@ async function solver(board, options) {
 
     if (options.verbose == null) {
         options.verbose = false;
-        writeToConsole("WARN: Verbose parameter not received by the solver, setting verbose = false");
+        showMessage("WARN: Verbose parameter not received by the solver, setting verbose = false");
     }
 
     if (options.playStyle == null) {
-        writeToConsole("WARN: playstyle parameter not received by the solver, setting play style to flagging");
+        showMessage("WARN: playstyle parameter not received by the solver, setting play style to flagging");
         options.playStyle = PLAY_STYLE_FLAGS;
     }
 
@@ -5183,10 +5168,10 @@ async function solver(board, options) {
 
         board.setHighDensity(squaresLeft, minesLeft);
 
-        writeToConsole("tiles left = " + squaresLeft);
-        writeToConsole("mines left = " + minesLeft);
-        writeToConsole("Witnesses  = " + witnesses.length);
-        writeToConsole("Witnessed  = " + witnessed.length);
+        showMessage("tiles left = " + squaresLeft);
+        showMessage("mines left = " + minesLeft);
+        showMessage("Witnesses  = " + witnesses.length);
+        showMessage("Witnessed  = " + witnessed.length);
 
         var result = [];
 
@@ -5249,7 +5234,7 @@ async function solver(board, options) {
 
         pe.process();
 
-        writeToConsole("probability Engine took " + pe.duration + " milliseconds to complete");
+        showMessage("probability Engine took " + pe.duration + " milliseconds to complete");
 
         if (pe.finalSolutionCount == 0) {
             showMessage("The board is in an illegal state");
@@ -5272,7 +5257,7 @@ async function solver(board, options) {
             }
 
             if (result.length > 0) {
-                writeToConsole("The Probability Engine has determined all off edge tiles must be safe");
+                showMessage("The Probability Engine has determined all off edge tiles must be safe");
                 offEdgeAllSafe = true;
                 //showMessage("The solver has determined all off edge tiles must be safe");
                 //return result;
@@ -5332,7 +5317,7 @@ async function solver(board, options) {
             if (pe.bestOnEdgeProbability >= pe.offEdgeProbability) {
                 result.push(pe.getBestCandidates(1)); // get best options
             } else {
-                writeToConsole("Off edge is best, off edge prob = " + pe.offEdgeProbability + ", on edge prob = " + pe.bestOnEdgeProbability, true);
+                showMessage("Off edge is best, off edge prob = " + pe.offEdgeProbability + ", on edge prob = " + pe.bestOnEdgeProbability, true);
                 var bestGuessTile = offEdgeGuess(board, witnessed);
                 result.push(new Action(bestGuessTile.getX(), bestGuessTile.getY(), pe.offEdgeProbability), ACTION_CLEAR);
             }
@@ -5369,7 +5354,7 @@ async function solver(board, options) {
 
             var solutionCount = pe.isolatedEdgeBruteForce.crunch();
 
-            writeToConsole("Solutions found by brute force for isolated edge " + solutionCount);
+            showMessage("Solutions found by brute force for isolated edge " + solutionCount);
 
             var bfda = new BruteForceAnalysis(pe.isolatedEdgeBruteForce.allSolutions, pe.isolatedEdgeBruteForce.iterator.tiles, 1000, options.verbose); // the tiles and the solutions need to be in sync
 
@@ -5420,7 +5405,7 @@ async function solver(board, options) {
 
                 var solutionCount = bruteForce.crunch();
 
-                writeToConsole("Solutions found by brute force " + solutionCount + " after " + iterator.getIterations() + " cycles");
+                showMessage("Solutions found by brute force " + solutionCount + " after " + iterator.getIterations() + " cycles");
 
                 var bfda = new BruteForceAnalysis(bruteForce.allSolutions, iterator.tiles, 1000, options.verbose); // the tiles and the solutions need to be in sync
 
@@ -5428,7 +5413,7 @@ async function solver(board, options) {
 
                 bfdaCompleted = bfda.completed;
             } else {
-                writeToConsole("Brute Force requires too many cycles - skipping BFDA: " + iterator.cycles);
+                showMessage("Brute Force requires too many cycles - skipping BFDA: " + iterator.cycles);
             }
 
 
@@ -5475,7 +5460,7 @@ async function solver(board, options) {
             for (var i = 0; i < deadTiles.length; i++) {
                 var tile = deadTiles[i];
 
-                writeToConsole("Tile " + tile.asText() + " is dead");
+                showMessage("Tile " + tile.asText() + " is dead");
                 for (var j = 0; j < result.length; j++) {
                     if (result[j].x == tile.x && result[j].y == tile.y) {
                         result[j].dead = true;
@@ -5694,7 +5679,7 @@ async function solver(board, options) {
         // }
 
         if (USE_HIGH_DENSITY_STRATEGY && board.isHighDensity() ) {
-            writeToConsole("Board is high density prioritise minimising solutions space");
+            showMessage("Board is high density prioritise minimising solutions space");
             actions.sort(function (a, b) {
 
                 var c = b.prob - a.prob;
@@ -5727,16 +5712,16 @@ async function solver(board, options) {
             var better = bfda.checkForBetterMove(actions[0]);
             if (better != null) {
                 var betterAction = new Action(better.x, better.y, better.probability, ACTION_CLEAR);
-                writeToConsole("Replacing " + actions[0].asText() + " with " + betterAction.asText() + " because it is better from partial BFDA");
+                showMessage("Replacing " + actions[0].asText() + " with " + betterAction.asText() + " because it is better from partial BFDA");
                 actions = [betterAction];
             }
         }
 
         findAlternativeMove(actions);
 
-        writeToConsole("Solver recommends (" + actions[0].x + "," + actions[0].y + ")");
+        showMessage("Solver recommends (" + actions[0].x + "," + actions[0].y + ")");
 
-        writeToConsole("Best Guess analysis took " + (Date.now() - start) + " milliseconds to complete");
+        showMessage("Best Guess analysis took " + (Date.now() - start) + " milliseconds to complete");
 
         // console.log(actions);
         return actions;
@@ -5769,7 +5754,7 @@ async function solver(board, options) {
         //         }
         //     }
 
-        //     writeToConsole("Tile " + tile.asText() + " has " + linkedTilesCount + " linked tiles and dominated=" + tile.dominated);
+        //     showMessage("Tile " + tile.asText() + " has " + linkedTilesCount + " linked tiles and dominated=" + tile.dominated);
 
         //     // a dominated tile doesn't need any further resolution
         //     if (tile.dominated) {
@@ -5874,7 +5859,7 @@ async function solver(board, options) {
         // }
 
         // if (USE_HIGH_DENSITY_STRATEGY && board.isHighDensity() ) {
-        //     writeToConsole("Board is high density prioritise minimising solutions space");
+        //     showMessage("Board is high density prioritise minimising solutions space");
         //     actions.sort(function (a, b) {
 
         //         var c = b.prob - a.prob;
@@ -5907,16 +5892,16 @@ async function solver(board, options) {
         //     var better = bfda.checkForBetterMove(actions[0]);
         //     if (better != null) {
         //         var betterAction = new Action(better.x, better.y, better.probability, ACTION_CLEAR);
-        //         writeToConsole("Replacing " + actions[0].asText() + " with " + betterAction.asText() + " because it is better from partial BFDA");
+        //         showMessage("Replacing " + actions[0].asText() + " with " + betterAction.asText() + " because it is better from partial BFDA");
         //         actions = [betterAction];
         //     }
         // }
 
         // findAlternativeMove(actions);
 
-        // writeToConsole("Solver recommends (" + actions[0].x + "," + actions[0].y + ")");
+        // showMessage("Solver recommends (" + actions[0].x + "," + actions[0].y + ")");
 
-        // writeToConsole("Best Guess analysis took " + (Date.now() - start) + " milliseconds to complete");
+        // showMessage("Best Guess analysis took " + (Date.now() - start) + " milliseconds to complete");
 
         // return actions;
 
@@ -5935,7 +5920,7 @@ async function solver(board, options) {
             if (alt.prob - action.prob > 0.001) { // the alternative move is at least a bit safe than the current move
                 for (var tile of action.commonClears) { // see if the move is in the list of common safe tiles
                     if (alt.x == tile.x && alt.y == tile.y) {
-                        writeToConsole("Replacing " + action.asText() + " with " + alt.asText() + " because it dominates");
+                        showMessage("Replacing " + action.asText() + " with " + alt.asText() + " because it dominates");
 
 
                         for (var j = 1; j <= i; j++) {
@@ -6006,7 +5991,7 @@ async function solver(board, options) {
 
         }
 
-        writeToConsole("Found " + result.size + " moves trivially");
+        showMessage("Found " + result.size + " moves trivially");
 
         // send it back as an array
         return Array.from(result.values());
@@ -6037,7 +6022,7 @@ async function solver(board, options) {
 
                 // if we only have isolated tiles then use this
                 if (adjCovered == 0 && bestGuessCount == 9) {
-                    writeToConsole(tile.asText() + " is surrounded by flags");
+                    showMessage(tile.asText() + " is surrounded by flags");
                     bestGuess = tile;
                 }
 
@@ -6049,7 +6034,7 @@ async function solver(board, options) {
         }
 
         if (bestGuess == null) {
-            writeToConsole("Off edge guess has returned null!", true);
+            showMessage("Off edge guess has returned null!", true);
         }
 
         return bestGuess;
@@ -6058,7 +6043,7 @@ async function solver(board, options) {
 
     function getOffEdgeCandidates(board, pe, witnesses, allCoveredTiles) {
 
-        writeToConsole("getting off edge candidates");
+        showMessage("getting off edge candidates");
 
         var accepted = new Set(); // use a map to deduplicate the witnessed tiles
 
@@ -6161,7 +6146,7 @@ async function solver(board, options) {
     //         var weight = probThisTile * bonus;
 
     //         if (best != null && weight < best.weight) {
-    //             writeToConsole("(" + action.x + "," + action.y + ") is being pruned");
+    //             showMessage("(" + action.x + "," + action.y + ") is being pruned");
     //             action.weight = weight;
     //             action.pruned = true;
 
@@ -6212,7 +6197,7 @@ async function solver(board, options) {
 
     //     tile.setProbability(action.prob, action.progress);
 
-    //     writeToConsole(tile.asText() + ", progress = " + action.progress + ", weight = " + action.weight + ", expected clears = " + action.expectedClears + ", common clears = " + commonClears.length);
+    //     showMessage(tile.asText() + ", progress = " + action.progress + ", weight = " + action.weight + ", expected clears = " + action.expectedClears + ", common clears = " + commonClears.length);
 
     // }
 
@@ -6238,7 +6223,7 @@ async function solver(board, options) {
     //         }
     //     }
 
-    //     writeToConsole("Tile " + tile.asText() + " has " + linkedTilesCount + " linked tiles and dominated=" + dominated);
+    //     showMessage("Tile " + tile.asText() + " has " + linkedTilesCount + " linked tiles and dominated=" + dominated);
 
     //     // a dominated tile doesn't need any further resolution
     //     if (dominated) {
@@ -6272,7 +6257,7 @@ async function solver(board, options) {
     //         var weight = (secondarySafety + probThisTileLeft) * bonus;
 
     //         if (best != null && weight < best.weight) {
-    //             writeToConsole("(" + action.x + "," + action.y + ") is being pruned");
+    //             showMessage("(" + action.x + "," + action.y + ") is being pruned");
     //             action.weight = weight;
     //             action.pruned = true;
 
@@ -6294,7 +6279,7 @@ async function solver(board, options) {
     //             var probThisTileValue = divideBigInt(work.finalSolutionsCount, pe.finalSolutionsCount, 6);
     //             secondarySafety = secondarySafety + probThisTileValue * work.bestProbability;
 
-    //             writeToConsole(tile.asText() + " with value " + value + " has probability " + probThisTileValue + ", secondary safety " + work.bestProbability + ", clears " + work.clearCount);
+    //             showMessage(tile.asText() + " with value " + value + " has probability " + probThisTileValue + ", secondary safety " + work.bestProbability + ", clears " + work.clearCount);
 
     //             probThisTileLeft = probThisTileLeft - probThisTileValue;
     //         }
@@ -6332,7 +6317,7 @@ async function solver(board, options) {
     //     action.commonClears = commonClears;
 
     //     tile.setProbability(action.prob, action.progress);
-    //     writeToConsole("Tile " + tile.asText() + ", secondary safety = " + secondarySafety + ",  progress = " + action.progress + ", weight = " + action.weight + ", expected clears = " + action.expectedClears + ", common clears = " + commonClears.length);
+    //     showMessage("Tile " + tile.asText() + ", secondary safety = " + secondarySafety + ",  progress = " + action.progress + ", weight = " + action.weight + ", expected clears = " + action.expectedClears + ", common clears = " + commonClears.length);
 
     // }
 
@@ -6468,14 +6453,14 @@ async function solver(board, options) {
             var boxWitness = adders[i];
 
             if (findBalance(boxWitness, adders)) {
-                writeToConsole("*** Balanced ***", true);
+                showMessage("*** Balanced ***", true);
                 balanced = true;
                 break;
             }
         }
 
         if (!balanced) {
-            writeToConsole("*** NOT Balanced ***", true);
+            showMessage("*** NOT Balanced ***", true);
             fillerTiles = [];
         }
 
@@ -6487,7 +6472,7 @@ async function solver(board, options) {
         var toRemove = boxWitness.minesToFind;
         var toAdd = boxWitness.tiles.length - toRemove;
 
-        writeToConsole("trying to balance " + boxWitness.tile.asText() + " to Remove=" + toRemove + ", or to Add=" + toAdd, true);
+        showMessage("trying to balance " + boxWitness.tile.asText() + " to Remove=" + toRemove + ", or to Add=" + toAdd, true);
 
         top: for (var balanceBox of adders) {
             if (balanceBox.tile.isEqual(boxWitness.tile)) {
@@ -6507,14 +6492,14 @@ async function solver(board, options) {
             var toAdd1 = balanceBox.tiles.length - toRemove1;
 
             if (toAdd1 == toRemove) {
-                writeToConsole("found balance " + balanceBox.tile.asText() + " to Add=" + toAdd1, true);
+                showMessage("found balance " + balanceBox.tile.asText() + " to Add=" + toAdd1, true);
                 addFillings(boxWitness, false); // remove from here
                 addFillings(balanceBox, true); // add to here
                 return true;
             }
 
             if (toRemove1 == toAdd) {
-                writeToConsole("found balance " + balanceBox.tile.asText() + " to Remove=" + toRemove1, true);
+                showMessage("found balance " + balanceBox.tile.asText() + " to Remove=" + toRemove1, true);
                 addFillings(boxWitness, true); // add to here
                 addFillings(balanceBox, false); // remove from here
                 return true;
@@ -6561,14 +6546,14 @@ async function solver(board, options) {
             if (adjTile.isCovered() && !adjTile.isSolverFoundBomb()) {
                 var filler = new Filling(adjTile.index, adjTile.x, adjTile.y, fill);
                 fillerTiles.push(filler);
-                //writeToConsole(filler.asText(), true);
+                //showMessage(filler.asText(), true);
             }
         }
 
 
     }
 
-    function writeToConsole(text, always) {
+    function showMessage(text, always) {
 
         if (always == null) {
             always = false;
