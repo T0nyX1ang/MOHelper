@@ -124,32 +124,41 @@ function refreshBoard() {
 		}
 	});
 
-	document.addEventListener("touchstart", function (e) {
-		if (timer !== null) {
-			clearTimeout(timer);
-		}
-		timer = setTimeout(() => {
-			lock = false;
-			if (!solver_status) {
-				// left mouse key
-				solver_status = solveBoard();
-			}
-		}, 500);
-	});
+    document.addEventListener("mousedown", function (e) {
+        if (solver_status) {
+            solver_status = refreshBoard();
+        }
+    });
 
-	document.addEventListener("touchend", function (e) {
-		clearTimeout(timer);
-		setTimeout(() => {
-			lock = true;
-			if (solver_status) {
-				solver_status = refreshBoard();
-			}
-		});
-	});
+    if ("ontouchstart" in document.documentElement) {
+        // special check for mobile devices
+        document.addEventListener("touchstart", function (e) {
+            if (timer !== null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                lock = false;
+                if (!solver_status) {
+                    // left mouse key
+                    solver_status = solveBoard();
+                }
+            }, 500);
+        });
 
-	document.addEventListener("click", function (e) {
-		if (lock && solver_status) {
-			solver_status = refreshBoard();
-		}
-	});
+        document.addEventListener("touchend", function (e) {
+            clearTimeout(timer);
+            setTimeout(() => {
+                lock = true;
+                if (solver_status) {
+                    solver_status = refreshBoard();
+                }
+            });
+        });
+
+        document.addEventListener("click", function (e) {
+            if (lock && solver_status) {
+                solver_status = refreshBoard();
+            }
+        });
+    }
 })();
