@@ -51,7 +51,7 @@ class Binomial {
                 this.binomialLookup[total][choose] = this.generate(choose, total);
                 //System.out.println("Binomial " + total + " choose " + choose + " is " + binomialLookup[total][choose]);
                 //} catch (e) {
-                //console.log("Error: " + e);
+                //showMessage("Error: " + e);
                 //}
             }
 
@@ -72,7 +72,7 @@ class Binomial {
         }
 
         if (0 > k || k > n) {
-            console.log("Binomial: 0 <= k and k <= n required, but n was " + n + " and k was " + k);
+            showMessage("Binomial: 0 <= k and k <= n required, but n was " + n + " and k was " + k);
             throw new Error("Binomial: 0 <= k and k <= n required, but n was " + n + " and k was " + k);
         }
 
@@ -165,10 +165,10 @@ class Binomial {
                 }
                 N = Math.floor(N / prime);
                 K = Math.floor(K / prime);
-                //console.log("r=" + r + " N=" + N + " k=" + k + " p=" + p);
+                //showMessage("r=" + r + " N=" + N + " k=" + k + " p=" + p);
                 safety--;
                 if (safety < 1) {
-                    console.log("Safety stop!!!");
+                    showMessage("Safety stop!!!");
                     break;
                 }
             }
@@ -213,7 +213,7 @@ class PrimeSieve {
 
     isPrime(n) {
         if (n <= 1 || n > this.max) {
-            console.log("Prime check is outside of range: " + n);
+            showMessage("Prime check is outside of range: " + n);
         }
 
         return !this.composite[n];
@@ -355,28 +355,14 @@ class Board {
         this.num_bombs = num_bombs;
         this.seed = seed;
         this.tiles = [];
-        this.started = false;
         this.bombs_left = this.num_bombs;
-        this.init_tiles();
-
         this.highDensity = false;
-    }
-
-    setStarted() {
-        if (this.start) {
-            console.log("Logic error: starting the same game twice");
-            return;
-        }
-
-        this.started = true;
+        this.init_tiles();
     }
 
     setHighDensity(tilesLeft, minesLeft) {
-        if (minesLeft * 5 > tilesLeft * 2) {
-            this.highDensity = true;
-        } else {
-            this.highDensity = false;
-        }
+        // set high density flag when the minesLeft / tilesLeft >= 0.4
+        this.highDensity = (minesLeft * 5 > tilesLeft * 2);
     }
 
     isHighDensity() {
@@ -694,13 +680,13 @@ class ProbabilityEngine {
         for (var i = 0; i < this.boxes.length; i++) {
             var box = this.boxes[i];
             box.calculate(this.minesLeft);
-            //console.log("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
+            //showMessage("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
         }
 
         // Report how many boxes each witness is adjacent to
         // for (var i = 0; i < this.boxWitnesses.length; i++) {
         //     var boxWit = this.boxWitnesses[i];
-        //     //console.log("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
+        //     //showMessage("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
         // }
 
     }
@@ -712,7 +698,7 @@ class ProbabilityEngine {
 
             if (witness.minesToFind == 1 && witness.tiles.length == 2) {
 
-                //console.log("Witness " + witness.tile.asText() + " is a possible unavoidable guess witness");
+                //showMessage("Witness " + witness.tile.asText() + " is a possible unavoidable guess witness");
                 var unavoidable = true;
                 // if every monitoring tile also monitors all the other tiles then it can't provide any information
                 check: for (var j = 0; j < witness.tiles.length; j++) {
@@ -740,7 +726,7 @@ class ProbabilityEngine {
                             for (var otherTile of witness.tiles) {
                                 if (!adjTile.isAdjacent(otherTile)) {
 
-                                    //console.log("Tile " + adjTile.asText() + " is not monitoring all the other witnessed tiles");
+                                    //showMessage("Tile " + adjTile.asText() + " is not monitoring all the other witnessed tiles");
                                     unavoidable = false;
                                     break check;
                                 }
@@ -773,7 +759,7 @@ class ProbabilityEngine {
                 link.tile1 = witness.tiles[0];
                 link.tile2 = witness.tiles[1];
 
-                //console.log("Witness " + witness.tile.asText() + " is a possible unavoidable guess witness");
+                //showMessage("Witness " + witness.tile.asText() + " is a possible unavoidable guess witness");
                 var unavoidable = true;
                 // if every monitoring tile also monitors all the other tiles then it can't provide any information
                 for (var j = 0; j < witness.tiles.length; j++) {
@@ -801,7 +787,7 @@ class ProbabilityEngine {
                             for (var otherTile of witness.tiles) {
                                 if (!adjTile.isAdjacent(otherTile)) {
 
-                                    //console.log("Tile " + adjTile.asText() + " is not monitoring all the other witnessed tiles");
+                                    //showMessage("Tile " + adjTile.asText() + " is not monitoring all the other witnessed tiles");
                                     link.trouble.push(adjTile);
                                     if (tile.isEqual(link.tile1)) {
                                         link.closed1 = false;
@@ -966,7 +952,7 @@ class ProbabilityEngine {
 
         while (nextWitness != null) {
 
-            //console.log("Probability engine processing witness " + nextWitness.boxWitness.tile.asText());
+            //showMessage("Probability engine processing witness " + nextWitness.boxWitness.tile.asText());
 
             // mark the new boxes as processed - which they will be soon
             for (var i = 0; i < nextWitness.newBoxes.length; i++) {
@@ -976,7 +962,7 @@ class ProbabilityEngine {
             this.workingProbs = this.mergeProbabilities(nextWitness);
 
             //if (this.workingProbs.length > 10) {
-            //    console.log("Items in the working array = " + this.workingProbs.length);
+            //    showMessage("Items in the working array = " + this.workingProbs.length);
             //}
 
             nextWitness = this.findNextWitness(nextWitness);
@@ -1014,13 +1000,13 @@ class ProbabilityEngine {
             var missingMines = nw.boxWitness.minesToFind - this.countPlacedMines(pl, nw);
 
             if (missingMines < 0) {
-                //console.log("Missing mines < 0 ==> ignoring line");
+                //showMessage("Missing mines < 0 ==> ignoring line");
                 // too many mines placed around this witness previously, so this probability can't be valid
             } else if (missingMines == 0) {
-                //console.log("Missing mines = 0 ==> keeping line as is");
+                //showMessage("Missing mines = 0 ==> keeping line as is");
                 newProbs.push(pl); // witness already exactly satisfied, so nothing to do
             } else if (nw.newBoxes.length == 0) {
-                //console.log("new boxes = 0 ==> ignoring line since nowhere for mines to go");
+                //showMessage("new boxes = 0 ==> ignoring line since nowhere for mines to go");
                 // nowhere to put the new mines, so this probability can't be valid
             } else {
 
@@ -1071,7 +1057,7 @@ class ProbabilityEngine {
         newProbs = this.crunchByMineCount(newProbs, sorter);
 
         //if (newProbs.length == 0) {
-        //     console.log("Returning no lines from merge probability !!");
+        //     showMessage("Returning no lines from merge probability !!");
         //}
 
         return newProbs;
@@ -1096,11 +1082,11 @@ class ProbabilityEngine {
     // this is used to recursively place the missing Mines into the available boxes for the probability line
     distributeMissingMines(pl, nw, missingMines, index) {
 
-        //console.log("Distributing " + missingMines + " missing mines to box " + nw.newBoxes[index].uid);
+        //showMessage("Distributing " + missingMines + " missing mines to box " + nw.newBoxes[index].uid);
 
         this.recursions++;
         if (this.recursions % 100 == 0) {
-            console.log("Probability Engine recursision = " + recursions);
+            showMessage("Probability Engine recursision = " + recursions);
         }
 
         var result = [];
@@ -1109,17 +1095,17 @@ class ProbabilityEngine {
         if (nw.newBoxes.length - index == 1) {
             // if there are too many for this box then the probability can't be valid
             if (nw.newBoxes[index].maxMines < missingMines) {
-                //console.log("Abandon (1)");
+                //showMessage("Abandon (1)");
                 return result;
             }
             // if there are too few for this box then the probability can't be valid
             if (nw.newBoxes[index].minMines > missingMines) {
-                //console.log("Abandon (2)");
+                //showMessage("Abandon (2)");
                 return result;
             }
             // if there are too many for this game then the probability can't be valid
             if (pl.mineCount + missingMines > this.maxTotalMines) {
-                //console.log("Abandon (3)");
+                //showMessage("Abandon (3)");
                 return result;
             }
 
@@ -1127,7 +1113,7 @@ class ProbabilityEngine {
             //pl.mineBoxCount[nw.newBoxes[index].uid] = BigInt(missingMines);
             //pl.mineCount = pl.mineCount + missingMines;
             result.push(this.extendProbabilityLine(pl, nw.newBoxes[index], missingMines));
-            //console.log("Distribute missing mines line after " + pl.mineBoxCount);
+            //showMessage("Distribute missing mines line after " + pl.mineBoxCount);
             return result;
         }
 
@@ -1150,8 +1136,8 @@ class ProbabilityEngine {
     // create a new probability line by taking the old and adding the mines to the new Box
     extendProbabilityLine(pl, newBox, mines) {
 
-        //console.log("Extended probability line: Adding " + mines + " mines to box " + newBox.uid);
-        //console.log("Extended probability line before" + pl.mineBoxCount);
+        //showMessage("Extended probability line: Adding " + mines + " mines to box " + newBox.uid);
+        //showMessage("Extended probability line before" + pl.mineBoxCount);
 
         var combination = this.SMALL_COMBINATIONS[newBox.tiles.length][mines];
         var bigCom = BigInt(combination);
@@ -1178,7 +1164,7 @@ class ProbabilityEngine {
         result.allocatedMines = pl.allocatedMines.slice();
         result.allocatedMines[newBox.uid] = mines;
 
-        //console.log("Extended probability line after " + result.mineBoxCount);
+        //showMessage("Extended probability line after " + result.mineBoxCount);
 
         return result;
     }
@@ -1187,7 +1173,7 @@ class ProbabilityEngine {
     // this combines newly generated probabilities with ones we have already stored from other independent sets of witnesses
     storeProbabilities() {
 
-        //console.log("At store probabilities");
+        //showMessage("At store probabilities");
 
         var result = [];
 
@@ -1767,7 +1753,7 @@ class ProbabilityEngine {
         //for (var i = 0; i < edgeTiles.size; i++) {
         //    text = text + edgeTiles[i].asText() + " ";
         //}
-        //console.log(text);
+        //showMessage(text);
 
         // if this edge is everything then it isn't an isolated edge
         //if (everything) {
@@ -1825,7 +1811,7 @@ class ProbabilityEngine {
 
             var w = this.prunedWitnesses[i];
 
-            //console.log("Checking witness " + w.tile.asText() + " for independence");
+            //showMessage("Checking witness " + w.tile.asText() + " for independence");
 
             var okay = true;
             for (var j = 0; j < this.independentWitnesses.length; j++) {
@@ -1834,14 +1820,14 @@ class ProbabilityEngine {
 
                 if (w.overlap(iw)) {
                     okay = false;
-                    //console.log("false");
+                    //showMessage("false");
                     break;
                 }
             }
 
             // split the witnesses into dependent ones and independent ones
             if (okay) {
-                //console.log("true");
+                //showMessage("true");
                 this.remainingSquares = this.remainingSquares - w.tiles.length;
                 this.independentIterations = this.independentIterations * combination(w.minesToFind, w.tiles.length);
                 this.independentMines = this.independentMines + w.minesToFind;
@@ -1871,14 +1857,14 @@ class ProbabilityEngine {
         // outside a box tally
         var outsideTally = BigInt(0);
 
-        //console.log("There are " + this.heldProbs.length + " different mine counts on the edge");
+        //showMessage("There are " + this.heldProbs.length + " different mine counts on the edge");
 
         // calculate how many mines
         for (var i = 0; i < this.heldProbs.length; i++) {
 
             var pl = this.heldProbs[i];
 
-            //console.log("Mine count is " + pl.mineCount + " with solution count " + pl.solutionCount + " mineBoxCount = " + pl.mineBoxCount);
+            //showMessage("Mine count is " + pl.mineCount + " with solution count " + pl.solutionCount + " mineBoxCount = " + pl.mineBoxCount);
 
             if (pl.mineCount >= this.minTotalMines) { // if the mine count for this solution is less than the minimum it can't be valid
 
@@ -1886,7 +1872,7 @@ class ProbabilityEngine {
                 //   System.out.println("Duplicate mines in probability Engine");
                 //}
 
-                //console.log("Mines left " + this.minesLeft + " mines on PL " + pl.mineCount + " squares left = " + this.squaresLeft);
+                //showMessage("Mines left " + this.minesLeft + " mines on PL " + pl.mineCount + " squares left = " + this.squaresLeft);
                 var mult = combination(this.minesLeft - pl.mineCount, this.TilesOffEdge); //# of ways the rest of the board can be formed
 
                 outsideTally = outsideTally + mult * BigInt(this.minesLeft - pl.mineCount) * (pl.solutionCount);
@@ -1895,7 +1881,7 @@ class ProbabilityEngine {
                 totalTally = totalTally + mult * (pl.solutionCount);
 
                 for (var j = 0; j < tally.length; j++) {
-                    //console.log("mineBoxCount " + j + " is " + pl.mineBoxCount[j]);
+                    //showMessage("mineBoxCount " + j + " is " + pl.mineBoxCount[j]);
                     tally[j] = tally[j] + (mult * pl.mineBoxCount[j]) / BigInt(this.boxes[j].tiles.length);
                     //hashTally[i] = hashTally[i].add(pl.hashCount[i]);
                 }
@@ -1909,7 +1895,7 @@ class ProbabilityEngine {
 
             if (totalTally != 0) {
                 if (tally[i] == totalTally) { // a mine
-                    //console.log("Box " + i + " contains mines");
+                    //showMessage("Box " + i + " contains mines");
                     this.boxProb[i] = 0;
 
                 } else if (tally[i] == 0) { // safe
@@ -1924,15 +1910,15 @@ class ProbabilityEngine {
                 this.boxProb[i] = 0;
             }
 
-            //console.log("Box " + i + " has probabality " + this.boxProb[i]);
+            //showMessage("Box " + i + " has probabality " + this.boxProb[i]);
 
             // for each tile in the box allocate a probability to it
             for (var j = 0; j < this.boxes[i].tiles.length; j++) {
-                //console.log(this.boxes[i].tiles[j].asText() + " set to probability " + this.boxProb[i]);
+                //showMessage(this.boxes[i].tiles[j].asText() + " set to probability " + this.boxProb[i]);
                 //this.boxes[i].tiles[j].setProbability(this.boxProb[i]);
 
                 if (this.boxProb[i] == 0) {
-                    //console.log(this.boxes[i].tiles[j].asText() + " set to mine");
+                    //showMessage(this.boxes[i].tiles[j].asText() + " set to mine");
                     this.minesFound.push(this.boxes[i].tiles[j]);
                     //this.boxes[i].tiles[j].setFoundBomb();
                 }
@@ -2335,7 +2321,7 @@ class Box {
             }
         }
 
-        //console.log("Box created for tile " + tile.asText() + " with " + this.boxWitnesses.length + " witnesses");
+        //showMessage("Box created for tile " + tile.asText() + " with " + this.boxWitnesses.length + " witnesses");
 
     }
 
@@ -2353,7 +2339,7 @@ class Box {
             }
         }
 
-        //console.log("Tile " + tile.asText() + " fits in box with tile " + this.tiles[0].asText());
+        //showMessage("Tile " + tile.asText() + " fits in box with tile " + this.tiles[0].asText());
 
         return true;
 
@@ -2500,8 +2486,8 @@ class SolutionCounter {
             }
             this.boxWitnesses.push(boxWit); // all witnesses are needed for the probability engine
         }
-        //console.log("Pruned " + pruned + " witnesses as duplicates");
-        //console.log("There are " + this.boxWitnesses.length + " Box witnesses");
+        //showMessage("Pruned " + pruned + " witnesses as duplicates");
+        //showMessage("There are " + this.boxWitnesses.length + " Box witnesses");
 
         // allocate each of the witnessed squares to a box
         var uid = 0;
@@ -2541,13 +2527,13 @@ class SolutionCounter {
         for (var i = 0; i < this.boxes.length; i++) {
             var box = this.boxes[i];
             box.calculate(this.minesLeft);
-            //console.log("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
+            //showMessage("Box " + box.tiles[0].asText() + " has min mines = " + box.minMines + " and max mines = " + box.maxMines);
         }
 
         // Report how many boxes each witness is adjacent to
         for (var i = 0; i < this.boxWitnesses.length; i++) {
             var boxWit = this.boxWitnesses[i];
-            //console.log("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
+            //showMessage("Witness " + boxWit.tile.asText() + " is adjacent to " + boxWit.boxes.length + " boxes and has " + boxWit.minesToFind + " mines to find");
         }
 
     }
@@ -2558,7 +2544,7 @@ class SolutionCounter {
 
         // if the board isn't valid then solution count is zero
         if (!this.validWeb) {
-            console.log("Web is invalid");
+            showMessage("Web is invalid");
             this.finalSolutionsCount = BigInt(0);
             this.clearCount = 0;
             return;
@@ -2580,7 +2566,7 @@ class SolutionCounter {
 
         while (nextWitness != null) {
 
-            //console.log("Probability engine processing witness " + nextWitness.boxWitness.tile.asText());
+            //showMessage("Probability engine processing witness " + nextWitness.boxWitness.tile.asText());
 
             // mark the new boxes as processed - which they will be soon
             for (var i = 0; i < nextWitness.newBoxes.length; i++) {
@@ -2617,13 +2603,13 @@ class SolutionCounter {
             var missingMines = nw.boxWitness.minesToFind - this.countPlacedMines(pl, nw);
 
             if (missingMines < 0) {
-                //console.log("Missing mines < 0 ==> ignoring line");
+                //showMessage("Missing mines < 0 ==> ignoring line");
                 // too many mines placed around this witness previously, so this probability can't be valid
             } else if (missingMines == 0) {
-                //console.log("Missing mines = 0 ==> keeping line as is");
+                //showMessage("Missing mines = 0 ==> keeping line as is");
                 newProbs.push(pl); // witness already exactly satisfied, so nothing to do
             } else if (nw.newBoxes.length == 0) {
-                //console.log("new boxes = 0 ==> ignoring line since nowhere for mines to go");
+                //showMessage("new boxes = 0 ==> ignoring line since nowhere for mines to go");
                 // nowhere to put the new mines, so this probability can't be valid
             } else {
 
@@ -2686,11 +2672,11 @@ class SolutionCounter {
     // this is used to recursively place the missing Mines into the available boxes for the probability line
     distributeMissingMines(pl, nw, missingMines, index) {
 
-        //console.log("Distributing " + missingMines + " missing mines to box " + nw.newBoxes[index].uid);
+        //showMessage("Distributing " + missingMines + " missing mines to box " + nw.newBoxes[index].uid);
 
         this.recursions++;
         if (this.recursions % 100 == 0) {
-            console.log("Probability Engine recursision = " + recursions);
+            showMessage("Probability Engine recursision = " + recursions);
         }
 
         var result = [];
@@ -2699,22 +2685,22 @@ class SolutionCounter {
         if (nw.newBoxes.length - index == 1) {
             // if there are too many for this box then the probability can't be valid
             if (nw.newBoxes[index].maxMines < missingMines) {
-                //console.log("Abandon (1)");
+                //showMessage("Abandon (1)");
                 return result;
             }
             // if there are too few for this box then the probability can't be valid
             if (nw.newBoxes[index].minMines > missingMines) {
-                //console.log("Abandon (2)");
+                //showMessage("Abandon (2)");
                 return result;
             }
             // if there are too many for this game then the probability can't be valid
             if (pl.mineCount + missingMines > this.maxTotalMines) {
-                //console.log("Abandon (3)");
+                //showMessage("Abandon (3)");
                 return result;
             }
 
             result.push(this.extendProbabilityLine(pl, nw.newBoxes[index], missingMines));
-            //console.log("Distribute missing mines line after " + pl.mineBoxCount);
+            //showMessage("Distribute missing mines line after " + pl.mineBoxCount);
             return result;
         }
 
@@ -2737,8 +2723,8 @@ class SolutionCounter {
     // create a new probability line by taking the old and adding the mines to the new Box
     extendProbabilityLine(pl, newBox, mines) {
 
-        //console.log("Extended probability line: Adding " + mines + " mines to box " + newBox.uid);
-        //console.log("Extended probability line before" + pl.mineBoxCount);
+        //showMessage("Extended probability line: Adding " + mines + " mines to box " + newBox.uid);
+        //showMessage("Extended probability line before" + pl.mineBoxCount);
 
         var combination = this.SMALL_COMBINATIONS[newBox.tiles.length][mines];
         var bigCom = BigInt(combination);
@@ -2765,7 +2751,7 @@ class SolutionCounter {
         result.allocatedMines = pl.allocatedMines.slice();
         result.allocatedMines[newBox.uid] = mines;
 
-        //console.log("Extended probability line after " + result.mineBoxCount);
+        //showMessage("Extended probability line after " + result.mineBoxCount);
 
         return result;
     }
@@ -2774,12 +2760,12 @@ class SolutionCounter {
     // this combines newly generated probabilities with ones we have already stored from other independent sets of witnesses
     storeProbabilities() {
 
-        //console.log("At store probabilities");
+        //showMessage("At store probabilities");
 
         var result = [];
 
         if (this.workingProbs.length == 0) {
-            //console.log("working probabilites list is empty!!");
+            //showMessage("working probabilites list is empty!!");
             this.heldProbs = [];
             return;
         }
@@ -2893,7 +2879,7 @@ class SolutionCounter {
         result.push(current);
         //}
 
-        //console.log(target.length + " Probability Lines compressed to " + result.length);
+        //showMessage(target.length + " Probability Lines compressed to " + result.length);
 
         return result;
 
@@ -3001,18 +2987,18 @@ class SolutionCounter {
         // outside a box tally
         var outsideTally = BigInt(0);
 
-        //console.log("There are " + this.heldProbs.length + " different mine counts on the edge");
+        //showMessage("There are " + this.heldProbs.length + " different mine counts on the edge");
 
         // calculate how many mines
         for (var i = 0; i < this.heldProbs.length; i++) {
 
             var pl = this.heldProbs[i];
 
-            //console.log("Mine count is " + pl.mineCount + " with solution count " + pl.solutionCount + " mineBoxCount = " + pl.mineBoxCount);
+            //showMessage("Mine count is " + pl.mineCount + " with solution count " + pl.solutionCount + " mineBoxCount = " + pl.mineBoxCount);
 
             if (pl.mineCount >= this.minTotalMines) { // if the mine count for this solution is less than the minimum it can't be valid
 
-                //console.log("Mines left " + this.minesLeft + " mines on PL " + pl.mineCount + " squares left = " + this.squaresLeft);
+                //showMessage("Mines left " + this.minesLeft + " mines on PL " + pl.mineCount + " squares left = " + this.squaresLeft);
                 var mult = combination(this.minesLeft - pl.mineCount, this.TilesOffEdge); //# of ways the rest of the board can be formed
 
                 outsideTally = outsideTally + mult * BigInt(this.minesLeft - pl.mineCount) * (pl.solutionCount);
@@ -3041,7 +3027,7 @@ class SolutionCounter {
 
         this.finalSolutionsCount = totalTally;
 
-        //console.log("Game has  " + this.finalSolutionsCount + " candidate solutions and " + this.clearCount + " clears");
+        //showMessage("Game has  " + this.finalSolutionsCount + " candidate solutions and " + this.clearCount + " clears");
 
     }
 
@@ -3409,7 +3395,7 @@ class FiftyFiftyHelper {
         }
 
         if (this.options.verbose || always) {
-            console.log(text);
+            showMessage(text);
         }
 
     }
@@ -3470,7 +3456,7 @@ class EfficiencyHelper {
 
                 // either we have a net gain, or we introduce more flags at zero cost. more flags means more chance to get a cheaper chord later
                 if (benefit >= cost) {
-                    console.log("Chord " + tile.asText() + " has reward " + (benefit - cost) + " and tiles adjacent to new flags " + hiddenMineNeighbours.size);
+                    showMessage("Chord " + tile.asText() + " has reward " + (benefit - cost) + " and tiles adjacent to new flags " + hiddenMineNeighbours.size);
                     chordLocations.push(new ChordLocation(tile, benefit, cost, hiddenMineNeighbours.size));
                 }
 
@@ -3491,7 +3477,7 @@ class EfficiencyHelper {
         var witnessReward = 0;
         for (var cl of chordLocations) {
 
-            //console.log("checking chord at " + cl.tile.asText());
+            //showMessage("checking chord at " + cl.tile.asText());
 
             // add the required flags
             //for (var adjTile of board.getAdjacent(cl.tile)) {
@@ -3512,9 +3498,9 @@ class EfficiencyHelper {
         }
 
         if (bestChord != null) {
-            console.log("Chord " + bestChord.tile.asText() + " has best reward of " + bestChord.netBenefit);
+            showMessage("Chord " + bestChord.tile.asText() + " has best reward of " + bestChord.netBenefit);
         } else {
-            console.log("No chord with net benefit > 0");
+            showMessage("No chord with net benefit > 0");
         }
 
 
@@ -3565,9 +3551,9 @@ class EfficiencyHelper {
                     }
                 }
                 if (adjChord == null) {
-                    //console.log("(" + act.x + "," + act.y + ") has no adjacent chord with net benefit > 0");
+                    //showMessage("(" + act.x + "," + act.y + ") has no adjacent chord with net benefit > 0");
                 } else {
-                    console.log("(" + act.x + "," + act.y + ") has adjacent chord " + adjChord.tile.asText() + " with net benefit " + adjChord.netBenefit);
+                    showMessage("(" + act.x + "," + act.y + ") has adjacent chord " + adjChord.tile.asText() + " with net benefit " + adjChord.netBenefit);
                 }
 
                 var adjMines = this.board.adjacentFoundMineCount(tile);
@@ -3583,7 +3569,7 @@ class EfficiencyHelper {
                 // reward = H - (M - F) = H - M + F
                 var reward = hidden - adjMines + adjFlags - chord;
 
-                //console.log("considering " + act.x + "," + act.y + " with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord + ")");
+                //showMessage("considering " + act.x + "," + act.y + " with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord + ")");
 
                 if (reward > witnessReward) {
 
@@ -3597,12 +3583,12 @@ class EfficiencyHelper {
                     // set this information on the tile, so we can display it in the tooltip
                     tile.setValueProbability(adjMines, prob);
 
-                    console.log("considering Clear (" + act.x + "," + act.y + ") with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord +
+                    showMessage("considering Clear (" + act.x + "," + act.y + ") with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord +
                                 " Prob=" + prob + "), expected benefit " + expected);
 
                     // if we have found an 100% safe zero then just click it.
                     if (adjMines == 0 && prob == 1) {
-                        console.log("(" + act.x + "," + act.y + ") is a certain zero no need for further analysis");
+                        showMessage("(" + act.x + "," + act.y + ") is a certain zero no need for further analysis");
                         bestAction = act;
                         break;
                         //adjChord = null;
@@ -3624,7 +3610,7 @@ class EfficiencyHelper {
                     }
 
                     if (current > highest) {
-                        //console.log("best " + act.x + "," + act.y);
+                        //showMessage("best " + act.x + "," + act.y);
                         highest = current;
                         if (adjChord != null) { // if there is an adjacent chord then use this to clear the tile
                             bestChord = adjChord;
@@ -3636,7 +3622,7 @@ class EfficiencyHelper {
 
                     }
                 } else {
-                    console.log("not considering (" + act.x + "," + act.y + ") with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord + ")");
+                    showMessage("not considering (" + act.x + "," + act.y + ") with value " + adjMines + " and reward " + reward + " ( H=" + hidden + " M=" + adjMines + " F=" + adjFlags + " Chord=" + chord + ")");
                 }
             }
 
@@ -3710,7 +3696,7 @@ class EfficiencyHelper {
 
         var expected = failedBenefit + divideBigInt(occurs, total, 6) * secondBenefit;
 
-        console.log("Chord " + chord1Tile.asText() + " followed by Chord " + chord2Tile.asText() + ": Chord 1: benefit " + chord1.netBenefit + ", Chord2: H=" + clearable + ", to F=" + needsFlag + ", Chord=" + chordClick +
+        showMessage("Chord " + chord1Tile.asText() + " followed by Chord " + chord2Tile.asText() + ": Chord 1: benefit " + chord1.netBenefit + ", Chord2: H=" + clearable + ", to F=" + needsFlag + ", Chord=" + chordClick +
                     ", Benefit=" + secondBenefit + " ==> expected benefit " + expected);
 
         var score = BigInt(failedBenefit) * total + BigInt(secondBenefit) * occurs;
@@ -3789,7 +3775,7 @@ class Cruncher {
 
         this.duration = Date.now() - peStart;
 
-        console.log(this.iterator.iterationsDone + " cycles took " + this.duration + " milliseconds");
+        showMessage(this.iterator.iterationsDone + " cycles took " + this.duration + " milliseconds");
 
         return candidates;
 
@@ -3860,7 +3846,7 @@ class Cruncher {
         for (var i = 0; i < mine.length; i++) {
             output = output + mine[i].asText();
         }
-        console.log(output);
+        showMessage(output);
         */
 
         return true;
@@ -3876,7 +3862,7 @@ class WitnessWebIterator {
     // if rotation is not - 1 then this locks the first 'cog' in that position and iterates the remaining cogs.  This allows parallel processing based on the position of the first 'cog'
     constructor(pe, allCoveredTiles, rotation) {
 
-        console.log("Creating Iterator");
+        showMessage("Creating Iterator");
 
         this.sample = []; // int array
 
@@ -3962,10 +3948,10 @@ class WitnessWebIterator {
 
         this.tiles = loc;
 
-        console.log("Mines left " + this.probabilityEngine.minesLeft);
-        console.log("Independent Mines " + indMines);
-        console.log("Tiles left " + this.probabilityEngine.tilesLeft);
-        console.log("Independent tiles " + indSquares);
+        showMessage("Mines left " + this.probabilityEngine.minesLeft);
+        showMessage("Independent Mines " + indMines);
+        showMessage("Tiles left " + this.probabilityEngine.tilesLeft);
+        showMessage("Independent tiles " + indSquares);
 
 
         // if there are more mines left then squares then no solution is possible
@@ -3974,7 +3960,7 @@ class WitnessWebIterator {
             indMines > this.probabilityEngine.minesLeft) {
             this.done = true;
             this.top = 0;
-            console.log("Nothing to do in this iterator");
+            showMessage("Nothing to do in this iterator");
             return;
         }
 
@@ -4006,7 +3992,7 @@ class WitnessWebIterator {
             }
         }
 
-        console.log("Iterations needed " + this.cycles);
+        showMessage("Iterations needed " + this.cycles);
 
     }
 
@@ -4015,7 +4001,7 @@ class WitnessWebIterator {
 
 
         if (this.done) {
-            console.log("**** attempting to iterator when already completed ****");
+            showMessage("**** attempting to iterator when already completed ****");
             return null;
         }
         var index = this.top;
@@ -4045,7 +4031,7 @@ class WitnessWebIterator {
             index++;
         }
 
-        //console.log(...this.sample);
+        //showMessage(...this.sample);
 
         this.iterationsDone++;
 
@@ -4101,14 +4087,14 @@ class SequentialIterator {
         // by 1 again
         this.sample[this.index]--;
 
-        //console.log("Sequential Iterator has " + this.numberBalls + " mines and " + this.numberHoles + " squares");
+        //showMessage("Sequential Iterator has " + this.numberBalls + " mines and " + this.numberHoles + " squares");
 
     }
 
     getNextSample() {
 
         if (!this.more) {
-            console.log("****  Trying to iterate after the end ****");
+            showMessage("****  Trying to iterate after the end ****");
             return null;
         }
 
@@ -4338,7 +4324,7 @@ class BruteForceAnalysis {
                 alive.zeroSolutions = valueCount[0];
                 living.push(alive);
             } else {
-                console.log(allTiles[i].asText() + " is dead with value " + minValue);
+                showMessage(allTiles[i].asText() + " is dead with value " + minValue);
                 this.deadTiles.push(allTiles[i]); // store the dead tiles
             }
 
@@ -4366,7 +4352,7 @@ class BruteForceAnalysis {
         //solver.display("first best move is " + loc.display());
         var prob = 1 - (bestLiving.mineCount / this.currentNode.getSolutionSize());
 
-        console.log("mines = " + bestLiving.mineCount + " solutions = " + this.currentNode.getSolutionSize());
+        showMessage("mines = " + bestLiving.mineCount + " solutions = " + this.currentNode.getSolutionSize());
         for (var i = 0; i < bestLiving.children.length; i++) {
             if (bestLiving.children[i] == null) {
                 //solver.display("Value of " + i + " is not possible");
@@ -4381,7 +4367,7 @@ class BruteForceAnalysis {
                 probText = bestLiving.children[i].getProbability();
                 //probText = Action.FORMAT_2DP.format(bestLiving.children[i].getProbability().multiply(ONE_HUNDRED)) + "%";
             }
-            console.log("Value of " + i + " leaves " + bestLiving.children[i].getSolutionSize() + " solutions and winning probability " + probText + " (work size " + bestLiving.children[i].work + ")");
+            showMessage("Value of " + i + " leaves " + bestLiving.children[i].getSolutionSize() + " solutions and winning probability " + probText + " (work size " + bestLiving.children[i].work + ")");
         }
 
         var action = new Action(loc.getX(), loc.getY(), prob, ACTION_CLEAR);
@@ -4410,7 +4396,7 @@ class BruteForceAnalysis {
             var line = INDENT.substring(0, depth * 3) + condition + " Solve chance " + node.getProbability();
 
             showMessage(line);
-            //console.log(line);
+            //showMessage(line);
             return;
         }
 
@@ -4422,7 +4408,7 @@ class BruteForceAnalysis {
         var line = INDENT.substring(0, depth * 3) + condition + " play " + loc.asText() + " Survival chance " + prob + ", Solve chance " + node.getProbability();
         showMessage(line);
 
-        //console.log(line);
+        //showMessage(line);
 
         //for (Node nextNode: node.bestLiving.children) {
         for (var val = 0; val < node.bestLiving.children.length; val++) {
@@ -4450,7 +4436,7 @@ class BruteForceAnalysis {
 
     showMessage(text) {
         if (this.verbose) {
-            console.log(text);
+            showMessage(text);
         }
     }
 
@@ -4547,7 +4533,7 @@ class LivingLocation {
                 work[i] = temp;
 
             } else {
-                //console.log("In cache " + temp.position.key + " " + temp1.position.key);
+                //showMessage("In cache " + temp.position.key + " " + temp1.position.key);
                 //if (!temp.equals(temp1)) {
                 //	System.out.println("Cache not equal!!");
                 //}
@@ -4568,7 +4554,7 @@ class LivingLocation {
         }
 
         if (index != parent.endLocation) {
-            console.log("**** Didn't read all the elements in the array; index = " + index + " end = " + parent.endLocation + " ****");
+            showMessage("**** Didn't read all the elements in the array; index = " + index + " end = " + parent.endLocation + " ****");
         }
 
 
@@ -4688,7 +4674,7 @@ class Node {
      */
     getWinningLines(depth, move, cutoff) { // move is class 'LivingLocation'
 
-        //console.log("At depth " + depth + " cutoff=" + cutoff);
+        //showMessage("At depth " + depth + " cutoff=" + cutoff);
 
         var result = 0;
 
@@ -4759,7 +4745,7 @@ class Node {
 
                     //add the child to the cache if it didn't come from there and it is carrying sufficient winning lines
                     if (child.work > 10) {
-                        //console.log("Entry placed in cache with key " + child.position.hashCode());
+                        //showMessage("Entry placed in cache with key " + child.position.hashCode());
                         child.work = 0;
                         child.fromCache = true;
                         cache.set(child.position.hashCode(), child);
@@ -4981,10 +4967,10 @@ function countSolutions(board, notMines) {
         witnessed.push(tile);
     }
 
-    //console.log("tiles left = " + squaresLeft);
-    //console.log("mines left = " + minesLeft);
-    //console.log("Witnesses  = " + witnesses.length);
-    //console.log("Witnessed  = " + witnessed.length);
+    //showMessage("tiles left = " + squaresLeft);
+    //showMessage("mines left = " + minesLeft);
+    //showMessage("Witnesses  = " + witnesses.length);
+    //showMessage("Witnessed  = " + witnessed.length);
 
     // var start = Date.now();
 
@@ -4999,7 +4985,7 @@ function countSolutions(board, notMines) {
 
     solutionCounter.process();
 
-    //console.log("solution counter took " + (Date.now() - start) + " milliseconds to complete, clears " + solutionCounter.clearCount);
+    //showMessage("solution counter took " + (Date.now() - start) + " milliseconds to complete, clears " + solutionCounter.clearCount);
 
     return solutionCounter;
 
@@ -5011,7 +4997,7 @@ async function solver(board, options) {
 
     // // when initialising create some entry points to functions needed from outside
     // if (board == null) {
-    //     console.log("Solver Initialisation request received");
+    //     showMessage("Solver Initialisation request received");
     //     solver.countSolutions = countSolutions;
     //     return;
     // }
@@ -5045,7 +5031,7 @@ async function solver(board, options) {
     while (noMoves < 5 && cleanActions.length == 0) {
         noMoves++;
         var actions = await doSolve(board, options); // look for solutions
-        //console.log(actions);
+        //showMessage(actions);
 
         // var otherActions = []; // this is other Actions of interest
 
@@ -5061,11 +5047,11 @@ async function solver(board, options) {
                 // ignore actions which are the primary actions
                 for (var action of actions) {
                     if (tile.x == action.x && tile.y == action.y) {
-                        //console.log(tile.asText() + " is a primary action");
+                        //showMessage(tile.asText() + " is a primary action");
                         continue top;
                     }
                 }
-                //console.log(tile.asText() + " mine=" + tile.isSolverFoundBomb() + ", flagged=" + tile.isFlagged() + ", probability=" + tile.probability);
+                //showMessage(tile.asText() + " mine=" + tile.isSolverFoundBomb() + ", flagged=" + tile.isFlagged() + ", probability=" + tile.probability);
                 if (tile.isSolverFoundBomb() && !tile.isFlagged()) {
                     otherActions.push(new Action(tile.getX(), tile.getY(), 0, ACTION_FLAG));
                 } else if (tile.probability == 1) {
@@ -5196,7 +5182,7 @@ async function solver(board, options) {
 
         // add any trivial moves we've found
         if (options.fullProbability || options.playStyle == PLAY_STYLE_EFFICIENCY) {
-            console.log("Skipping trivial analysis since Probability Engine analysis is required")
+            showMessage("Skipping trivial analysis since Probability Engine analysis is required")
         } else {
             result.push(...trivial_actions(board, witnesses));
         }
@@ -5523,7 +5509,7 @@ async function solver(board, options) {
     function tieBreak(pe, actions, bfda) {
 
         // var base = pe.bestProbability;
-        // console.log(cut_off);
+        // showMessage(cut_off);
         actions = actions.sort(function (a, b) { return b.prob - a.prob; });
 
         var start = Date.now();
@@ -5587,7 +5573,7 @@ async function solver(board, options) {
             var maxSolutions = BigInt(0);
             var secondarySafety = 0;
 
-            // console.log(action);
+            // showMessage(action);
 
             function dfs(k) {
                 if (k == len) {
@@ -5598,7 +5584,7 @@ async function solver(board, options) {
                         if (work.bestProbability == 1) {
                             solutionsWithProgess = solutionsWithProgess + work.finalSolutionsCount;
                         }
-                        // console.log(probThisTileValue, work.bestProbability);
+                        // showMessage(probThisTileValue, work.bestProbability);
                     }
                     if (work.clearCount > 0) {
                         expectedClears = expectedClears + work.finalSolutionsCount * BigInt(work.clearCount);
@@ -5614,7 +5600,7 @@ async function solver(board, options) {
                     var adjFlags = board.adjacentFoundMineCount(tile_temp);
                     var adjCovered = board.adjacentCoveredCount(tile_temp);
                     for (var value = adjFlags; value <= adjCovered + adjFlags; value++) {
-                        // console.log(tile_temp, value);
+                        // showMessage(tile_temp, value);
                         tile_temp.setValue(value);
                         dfs(k + 1);
                         tile_temp.setCovered(true);
@@ -5641,12 +5627,12 @@ async function solver(board, options) {
             // tile.setProbability(action.prob, action.progress);
 
         }
-        // console.log(actions);
+        // showMessage(actions);
         // for (var action of actions) {
-        //     // console.log(action.x, action.y, action.commonClears, 1);
+        //     // showMessage(action.x, action.y, action.commonClears, 1);
 
         //     var tile = board.getTileXY(action.x, action.y);
-        //     // console.log(2455, action.x, action.y, tile.temp, action.commonClears);
+        //     // showMessage(2455, action.x, action.y, tile.temp, action.commonClears);
 
         //     if (action.action == ACTION_FLAG || action.pruned) { // ignore the action if it is a flagging request
         //         continue;
@@ -5658,20 +5644,20 @@ async function solver(board, options) {
         //     var progress = tile.temp;
         //     if (action.commonClears != null && action.commonClears.length > 0) {
         //         // progress = 0;
-        //         // console.log(action.x, action.y, progress, 31);
+        //         // showMessage(action.x, action.y, progress, 31);
         //         for (var son of action.commonClears){
-        //             // console.log(son);
+        //             // showMessage(son);
         //             progress = progress + son.temp;
         //         }
         //     }
-        //     // console.log(action.x, action.y, progress, 3);
+        //     // showMessage(action.x, action.y, progress, 3);
         //     action.progress = progress;
         //     action.weight = action.prob * (1 + contribution * progress);
-        //     // console.log(action);
+        //     // showMessage(action);
         //     tile.setProbability(action.prob, progress);
         //     if (action.commonClears != null && action.commonClears.length > 0) {
         //         for (var son of action.commonClears){
-        //             // console.log(son);
+        //             // showMessage(son);
         //             son.setProbability(son.probability, progress);
         //             son.dominated = true;
         //         }
@@ -5723,7 +5709,7 @@ async function solver(board, options) {
 
         showMessage("Best Guess analysis took " + (Date.now() - start) + " milliseconds to complete");
 
-        // console.log(actions);
+        // showMessage(actions);
         return actions;
 
         // for (var action of actions) {
@@ -6079,9 +6065,9 @@ async function solver(board, options) {
 
                         var workTile = board.getTileXY(x1, y1);
 
-                        //console.log(x1 + " " + y1 + " is within range, covered " + workTile.isCovered() + ", on Edge " + workTile.onEdge);
+                        //showMessage(x1 + " " + y1 + " is within range, covered " + workTile.isCovered() + ", on Edge " + workTile.onEdge);
                         if (workTile.isCovered() && !workTile.isSolverFoundBomb() && !workTile.onEdge) {
-                            //console.log(x1 + " " + y1 + " is covered and off edge");
+                            //showMessage(x1 + " " + y1 + " is covered and off edge");
                             accepted.add(workTile);
                             //result.push(new Action(x1, y1, pe.offEdgeProbability));
                         }
@@ -6374,10 +6360,10 @@ async function solver(board, options) {
             witnessed.push(tile);
         }
 
-        //console.log("tiles left = " + squaresLeft);
-        //console.log("mines left = " + minesLeft);
-        //console.log("Witnesses  = " + witnesses.length);
-        //console.log("Witnessed  = " + witnessed.length);
+        //showMessage("tiles left = " + squaresLeft);
+        //showMessage("mines left = " + minesLeft);
+        //showMessage("Witnesses  = " + witnesses.length);
+        //showMessage("Witnessed  = " + witnessed.length);
 
         // var start = Date.now();
 
@@ -6396,7 +6382,7 @@ async function solver(board, options) {
 
         pe.process();
 
-        //console.log("solution counter took " + (Date.now() - start) + " milliseconds to complete, clears " + solutionCounter.clearCount);
+        //showMessage("solution counter took " + (Date.now() - start) + " milliseconds to complete, clears " + solutionCounter.clearCount);
 
         return pe;
 
@@ -6440,7 +6426,7 @@ async function solver(board, options) {
         //     var minesToFind = boxWitness.minesToFind;
         //     var spacesLeft = boxWitness.tiles.length;
 
-        //     //console.log(boxWitness.tile.asText() + " length " + boxWitness.tiles.length + ", add " + (spacesLeft - minesToFind) + ", remove " + minesToFind);
+        //     //showMessage(boxWitness.tile.asText() + " length " + boxWitness.tiles.length + ", add " + (spacesLeft - minesToFind) + ", remove " + minesToFind);
 
         // }
 
@@ -6549,22 +6535,7 @@ async function solver(board, options) {
                 //showMessage(filler.asText(), true);
             }
         }
-
-
     }
-
-    function showMessage(text, always) {
-
-        if (always == null) {
-            always = false;
-        }
-
-        if (options.verbose || always) {
-            console.log(text);
-        }
-
-    }
-
 }
 
 // shared functions
